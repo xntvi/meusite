@@ -1,7 +1,7 @@
 <html lang="en" class="scroll-smooth bg-[#030303] text-gray-200 selection:bg-gray-200 selection:text-black"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XNT VISUALS</title>
+    <title>XNT PORTFÓLIO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
@@ -23,16 +23,21 @@
       }
       /* Atmospheric Edge Blur */
       .edge-blur {
-      position: fixed; top: 0; bottom: 0; width: 6vw; pointer-events: none; z-index: 50;
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      }
-      .edge-blur.left {
-      left: 0; background: linear-gradient(to right, rgba(3,3,3,0.9), transparent);
-      mask-image: linear-gradient(to right, black, transparent); -webkit-mask-image: linear-gradient(to right, black, transparent);
-      }
-      .edge-blur.right {
-      right: 0; background: linear-gradient(to left, rgba(3,3,3,0.9), transparent);
-      mask-image: linear-gradient(to left, black, transparent); -webkit-mask-image: linear-gradient(to left, black, transparent);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 8vw; /* aumentei pra ficar mais visível */
+  pointer-events: none;
+  z-index: 50;
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  /* distorção */
+  filter: url(#edge-fx);
+
+  opacity: 0.9;
+  will-change: backdrop-filter, filter;
       }
       /* Custom Scrollbar */
       ::-webkit-scrollbar { width: 4px; }
@@ -431,19 +436,19 @@
             </h2>
             <ul class="flex flex-col gap-4 text-base font-light text-gray-400">
               <li>
-                <a href="#" class="hover:text-white transition-colors duration-300">
-                  Instagram
-                </a>
+                <a href="https://instagram.com/xntvisuals" target="_blank">
+  Instagram
+</a>
               </li>
               <li>
-                <a href="#" class="hover:text-white transition-colors duration-300">
-                  Whatsapp
-                </a>
+                <a href="https://wa.me/5581988938184" target="_blank">
+  Whatsapp
+</a>
               </li>
               <li>
-                <a href="#" class="hover:text-white transition-colors duration-300">
-                  Email
-                </a>
+                <a href="mailto:xntvisuals@gmail.com">
+  Email
+</a>
               </li>
             </ul>
 
