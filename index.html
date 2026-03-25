@@ -1,0 +1,673 @@
+<html lang="en" class="scroll-smooth bg-[#030303] text-gray-200 selection:bg-gray-200 selection:text-black"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XNT VISUALS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+    <style>
+      :root {
+      --bg-color: #030303;
+      }
+      body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      overflow-x: hidden;
+      }
+      .font-mono { font-family: 'JetBrains Mono', monospace; }
+      /* Cinematic Grain Overlay */
+      .film-grain {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none; z-index: 9999; opacity: 0.04; mix-blend-mode: difference;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      }
+      /* Atmospheric Edge Blur */
+      .edge-blur {
+      position: fixed; top: 0; bottom: 0; width: 6vw; pointer-events: none; z-index: 50;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      }
+      .edge-blur.left {
+      left: 0; background: linear-gradient(to right, rgba(3,3,3,0.9), transparent);
+      mask-image: linear-gradient(to right, black, transparent); -webkit-mask-image: linear-gradient(to right, black, transparent);
+      }
+      .edge-blur.right {
+      right: 0; background: linear-gradient(to left, rgba(3,3,3,0.9), transparent);
+      mask-image: linear-gradient(to left, black, transparent); -webkit-mask-image: linear-gradient(to left, black, transparent);
+      }
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar { width: 4px; }
+      ::-webkit-scrollbar-track { background: var(--bg-color); }
+      ::-webkit-scrollbar-thumb { background: #222; }
+      ::-webkit-scrollbar-thumb:hover { background: #444; }
+      /* Animations */
+      .clip-reveal-center {
+      clip-path: inset(50% 0 50% 0);
+      transition: clip-path 1.6s cubic-bezier(0.85, 0, 0.15, 1);
+      }
+      .clip-reveal-center.revealed { clip-path: inset(0 0 0 0); }
+      .fade-up {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 1s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+      .fade-up.revealed { opacity: 1; transform: translateY(0); }
+      /* Custom Input */
+      .custom-input {
+      background: transparent; border: none; border-bottom: 1px solid #333;
+      border-radius: 0; outline: none; transition: border-color 0.4s ease;
+      }
+      .custom-input:focus { border-bottom-color: #fff; }
+      /* Hide cursor entirely in hero */
+      #hero-section { cursor: none; }
+      /* Barcode setup */
+      .nav-link-text { display: none; }
+    </style>
+    <style>
+      @keyframes titleLoop {
+      0% { transform: translateY(100%); opacity: 0; }
+      10% { transform: translateY(0); opacity: 1; }
+      80% { transform: translateY(0); opacity: 1; }
+      90% { transform: translateY(-120%); opacity: 0; }
+      100% { transform: translateY(100%); opacity: 0; }
+      }
+      .title-letter {
+      animation: titleLoop 6s infinite cubic-bezier(0.2, 0.8, 0.2, 1);
+      display: inline-block;
+      will-change: transform, opacity;
+      }
+      .animated-title {
+      display: flex;
+      overflow: hidden;
+      }
+      .parallax-image {
+      will-change: transform;
+      }
+    </style>
+    <style>
+      /* Header Dynamic Effects */
+      .header-glass-bg {
+      position: absolute; inset: 0; z-index: -1;
+      background: linear-gradient(to bottom, rgba(3,3,3,0.5), transparent);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      pointer-events: none;
+      }
+      .header-edge {
+      position: absolute; top: 0; bottom: 0; width: 35%;
+      pointer-events: none; z-index: -1;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      will-change: width, opacity;
+      }
+      @supports (backdrop-filter: url(#edge-fx)) or (-webkit-backdrop-filter: url(#edge-fx)) {
+      .header-edge {
+      backdrop-filter: url(#edge-fx);
+      -webkit-backdrop-filter: url(#edge-fx);
+      }
+      }
+      .header-edge.left {
+      left: 0;
+      mask-image: linear-gradient(to right, black 0%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, black 0%, transparent 100%);
+      }
+      .header-edge.right {
+      right: 0;
+      mask-image: linear-gradient(to left, black 0%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to left, black 0%, transparent 100%);
+      }
+    </style>
+  </head>
+  <body class="antialiased text-base">
+    <svg style="position: absolute; width: 0; height: 0; pointer-events: none;" aria-hidden="true">
+      <defs>
+        <filter id="edge-fx" color-interpolation-filters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="12" result="blur"></feGaussianBlur>
+          <feTurbulence type="fractalNoise" baseFrequency="0.002" numOctaves="1" result="noise"></feTurbulence>
+          <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" in="noise" result="warp-map"></feColorMatrix>
+          <feDisplacementMap in="blur" in2="warp-map" scale="25" xChannelSelector="R" yChannelSelector="G" result="warped"></feDisplacementMap>
+          <feOffset dx="5" dy="0" in="warped" result="offsetR"></feOffset>
+          <feOffset dx="-5" dy="0" in="warped" result="offsetB"></feOffset>
+          <feOffset dx="0" dy="0" in="warped" result="offsetG"></feOffset>
+          <feColorMatrix type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" in="offsetR" result="red"></feColorMatrix>
+          <feColorMatrix type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" in="offsetG" result="green"></feColorMatrix>
+          <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" in="offsetB" result="blue"></feColorMatrix>
+          <feBlend mode="screen" in="red" in2="green" result="rg"></feBlend>
+          <feBlend mode="screen" in="rg" in2="blue" result="rgb"></feBlend>
+        </filter>
+      </defs>
+    </svg>
+    <!-- Global Overlays -->
+    <div class="film-grain"></div>
+    <div class="edge-blur left"></div>
+    <div class="edge-blur right"></div>
+
+    <!-- Header Navigation -->
+    <header class="fixed top-0 w-full z-40 border-b border-white/5 py-4 px-6 md:px-12 flex items-center justify-center gap-8 md:gap-16 bg-transparent">
+      <div class="absolute inset-0 z-[-1] pointer-events-none overflow-hidden">
+        <div class="header-glass-bg"></div>
+        <div class="header-edge left"></div>
+        <div class="header-edge right"></div>
+      </div>
+      <div class="flex gap-6 md:gap-8">
+        <a href="#hero-section" class="nav-barcode text-xs font-mono tracking-widest text-gray-500 hover:text-white transition-colors duration-500" data-text="INICIO">
+          ||||||||
+        </a>
+        <a href="#works-section" class="nav-barcode text-xs font-mono tracking-widest text-gray-500 hover:text-white transition-colors duration-500" data-text="TRABALHOS">
+          ||||||||
+        </a>
+      </div>
+
+      <div class="flex justify-center">
+        <span class="text-xl font-medium tracking-tight text-white select-none relative group cursor-pointer">
+          XNT
+          <span class="absolute -bottom-1 left-0 w-0 h-px bg-white transition-all duration-500 group-hover:w-full"></span>
+        </span>
+      </div>
+
+      <div class="flex gap-6 md:gap-8">
+        <a href="#about-section" class="nav-barcode text-xs font-mono tracking-widest text-gray-500 hover:text-white transition-colors duration-500" data-text="SOBRE">
+          ||||||||
+        </a>
+        <a href="#contact-section" class="nav-barcode text-xs font-mono tracking-widest text-gray-500 hover:text-white transition-colors duration-500" data-text="CONTATO">
+          ||||||||
+        </a>
+      </div>
+    </header>
+
+    <!-- Crosshair Elements (JS Controlled, Fixed to Viewport) -->
+    <div id="crosshair-container" class="fixed inset-0 pointer-events-none z-30 opacity-0 transition-opacity duration-700">
+      <div id="line-v" class="absolute top-0 bottom-0 w-[1px] bg-white/20 origin-top">
+        <div class="absolute top-1/2 left-4 -translate-y-1/2 origin-left rotate-90 text-[10px] font-mono tracking-widest text-white/50 whitespace-nowrap mix-blend-difference">
+          PERNAMBUCO
+        </div>
+      </div>
+      <div id="line-h" class="absolute left-0 right-0 h-[1px] bg-white/20 origin-left">
+        <div class="absolute left-1/2 bottom-4 -translate-x-1/2 text-[10px] font-mono tracking-widest text-white/50 whitespace-nowrap mix-blend-difference">
+          ONDE [-34.926313 -8.151969]
+        </div>
+      </div>
+    </div>
+
+    <main>
+      <!-- Hero Section -->
+      <section id="hero-section" class="relative min-h-screen pt-32 pb-24 px-6 md:px-12 flex flex-col items-center justify-center border-b border-white/5 overflow-hidden">
+        <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center relative z-10">
+          <!-- Center Image Area (Spans 6 cols) -->
+          <div class="lg:col-span-6 lg:col-start-4 w-full flex justify-center relative">
+            <div class="w-full max-w-md aspect-[4/5] bg-[#0a0a0a] overflow-hidden relative">
+              <!-- Using a high-end abstract image placeholder -->
+              <img id="main-hero-img" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" alt="Hero Portait" class="w-full h-full object-cover clip-reveal-center grayscale hover:grayscale-0 transition-all duration-1000 ease-in-out scale-105">
+            </div>
+          </div>
+
+          <!-- Right Content Area -->
+          <div class="lg:col-span-3 lg:col-start-10 flex flex-col gap-16 mt-12 lg:mt-0">
+            <!-- Scrambled Text -->
+            <p class="text-sm font-light text-gray-400 leading-relaxed max-w-xs encrypt-text" data-text="Gosto de pensar que sou muitas coisas entre elas Diretor de arte, Editor de vídeos, Fotógrafo... acho que sou uma pessoa criativa.">
+              <!-- Content injected via JS -->
+            </p>
+
+            <!-- Logos Container -->
+            <div class="flex flex-col gap-4">
+              <span class="text-[10px] font-mono uppercase tracking-widest text-gray-600 mb-2">
+                Onde pude usar minha criatividade :
+              </span>
+              <div class="grid grid-cols-3 gap-x-6 gap-y-8 items-center justify-start opacity-60 hover:opacity-100 transition-opacity duration-500">
+                <!-- Logos represented structurally -->
+                <div class="logo-item fade-up">
+                  <i data-lucide="triangle" stroke-width="1.5" class="w-6 h-6 text-white"></i>
+                </div>
+                <div class="logo-item fade-up">
+                  <i data-lucide="circle-dashed" stroke-width="1.5" class="w-6 h-6 text-white"></i>
+                </div>
+                <div class="logo-item fade-up">
+                  <i data-lucide="hexagon" stroke-width="1.5" class="w-6 h-6 text-white"></i>
+                </div>
+                <div class="logo-item fade-up">
+                  <i data-lucide="box" stroke-width="1.5" class="w-6 h-6 text-white"></i>
+                </div>
+                <div class="logo-item fade-up">
+                  <i data-lucide="compass" stroke-width="1.5" class="w-6 h-6 text-white"></i>
+                </div>
+                <div class="logo-item fade-up">
+                  <i data-lucide="aperture" stroke-width="1.5" class="w-6 h-6 text-white"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Filtered Projects Section -->
+      <section id="works-section" class="py-12 bg-[#050505] relative z-20">
+        <!-- Filter Toggle -->
+        <div class="flex flex-col items-center justify-center mb-12 border-b border-white/5 pb-8 relative group">
+          <button id="filter-btn" class="flex flex-col items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-gray-500 hover:text-white transition-colors">
+            <span class="w-px h-8 bg-gradient-to-b from-transparent to-white/20 mb-2 group-hover:to-white/50 transition-colors"></span>
+            <i data-lucide="chevron-down" stroke-width="1.5" id="filter-icon" class="w-4 h-4 transition-transform duration-500 ease-in-out"></i>
+          </button>
+
+          <!-- Expandable Filter List -->
+          <div id="filter-container" class="w-full max-w-3xl overflow-hidden h-0 transition-all duration-700 ease-in-out opacity-0">
+            <div class="flex flex-wrap justify-center gap-x-8 gap-y-4 pt-12 pb-4">
+              <button class="text-xs font-mono tracking-widest text-white transition-colors">
+                3D
+              </button>
+              <button class="text-xs font-mono tracking-widest text-gray-600 hover:text-white transition-colors">
+                UI/UX
+              </button>
+              <button class="text-xs font-mono tracking-widest text-gray-600 hover:text-white transition-colors">
+                DESIGN GRÁFICO
+              </button>
+              <button class="text-xs font-mono tracking-widest text-gray-600 hover:text-white transition-colors">
+                VIDEO EDITING
+              </button>
+              <button class="text-xs font-mono tracking-widest text-gray-600 hover:text-white transition-colors">
+                MOTION DESIGN
+              </button>
+              <button class="text-xs font-mono tracking-widest text-gray-600 hover:text-white transition-colors">
+                DIREÇÃO DE ARTE
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-1 bg-white/5 border-y border-white/5 max-w-[100vw] overflow-hidden">
+          <!-- Project Card 1 -->
+          <article class="project-card relative w-full aspect-[4/3] bg-[#0c0c0c] overflow-hidden group cursor-pointer">
+            <div class="absolute inset-0 w-full h-full z-0 overflow-hidden bg-black">
+              <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" class="parallax-image absolute inset-[-10%] w-[120%] h-[120%] object-cover opacity-30 grayscale group-hover:opacity-50 transition-all duration-700 ease-out origin-center" style="transform: translate(0,0) scale(1);" alt="Project background">
+              <div class="absolute inset-0 backdrop-blur-[6px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 ease-out z-10 pointer-events-none"></div>
+            </div>
+            <div class="absolute inset-0 z-20 p-8 md:p-12 flex flex-col justify-between pointer-events-none">
+              <div class="flex justify-between items-start">
+                <h2 class="text-4xl md:text-5xl font-semibold tracking-tight text-white uppercase mix-blend-difference flex flex-col items-start w-full">
+                  <span class="animated-title flex overflow-hidden" data-text="COCA-COLA"></span>
+                </h2>
+              </div>
+              <div class="flex justify-between items-end font-mono text-[10px] tracking-widest text-gray-400 uppercase">
+                <span>2025</span>
+                <span>MOTION DESIGN</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project Card 2 -->
+          <article class="project-card relative w-full aspect-[4/3] bg-[#0c0c0c] overflow-hidden group cursor-pointer">
+            <div class="absolute inset-0 w-full h-full z-0 overflow-hidden bg-black">
+              <img src="https://images.unsplash.com/photo-1550684376-efcbd6e3f031?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" class="parallax-image absolute inset-[-10%] w-[120%] h-[120%] object-cover opacity-30 grayscale group-hover:opacity-50 transition-all duration-700 ease-out origin-center" style="transform: translate(0,0) scale(1);" alt="Project background">
+              <div class="absolute inset-0 backdrop-blur-[6px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 ease-out z-10 pointer-events-none"></div>
+            </div>
+            <div class="absolute inset-0 z-20 p-8 md:p-12 flex flex-col justify-between pointer-events-none">
+              <div class="flex justify-between items-start w-full relative">
+                <h2 class="text-4xl md:text-5xl font-semibold tracking-tight text-white uppercase mix-blend-difference flex flex-col items-center text-center w-full">
+                  <span class="animated-title flex overflow-hidden justify-center" data-text="CARNAVAL"></span>
+                  <span class="text-xs font-mono tracking-widest text-blue-500/80 block mt-2">
+                    RECIFE
+                  </span>
+                </h2>
+              </div>
+              <div class="flex justify-between items-end font-mono text-[10px] tracking-widest text-gray-400 uppercase">
+                <span>2024</span>
+                <span>EDIÇÃO DE VÍDEO</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project Card 3 -->
+          <article class="project-card relative w-full aspect-[4/3] bg-[#0c0c0c] overflow-hidden group cursor-pointer">
+            <div class="absolute inset-0 w-full h-full z-0 overflow-hidden bg-black">
+              <img src="https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" class="parallax-image absolute inset-[-10%] w-[120%] h-[120%] object-cover opacity-30 grayscale group-hover:opacity-50 transition-all duration-700 ease-out origin-center" style="transform: translate(0,0) scale(1);" alt="Project background">
+              <div class="absolute inset-0 backdrop-blur-[6px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 ease-out z-10 pointer-events-none"></div>
+            </div>
+            <div class="absolute inset-0 z-20 p-8 md:p-12 flex flex-col justify-between pointer-events-none">
+              <div class="flex justify-between items-start">
+                <h2 class="text-4xl md:text-5xl font-semibold tracking-tight text-white uppercase mix-blend-difference flex flex-col items-start w-full">
+                  <span class="animated-title flex overflow-hidden" data-text="GUARARAPES"></span>
+                  <span class="text-xs font-mono tracking-widest text-yellow-600/80 block mt-2">
+                    SHOPPING
+                  </span>
+                </h2>
+              </div>
+              <div class="flex justify-between items-end font-mono text-[10px] tracking-widest text-gray-400 uppercase">
+                <span>2025</span>
+                <span>EDIÇÃO DE VÍDEO</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project Card 4 -->
+          <article class="project-card relative w-full aspect-[4/3] bg-[#0c0c0c] overflow-hidden group cursor-pointer">
+            <div class="absolute inset-0 w-full h-full z-0 overflow-hidden bg-black">
+              <img src="https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" class="parallax-image absolute inset-[-10%] w-[120%] h-[120%] object-cover opacity-30 grayscale group-hover:opacity-50 transition-all duration-700 ease-out origin-center" style="transform: translate(0,0) scale(1);" alt="Project background">
+              <div class="absolute inset-0 backdrop-blur-[6px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 ease-out z-10 pointer-events-none"></div>
+            </div>
+            <div class="absolute inset-0 z-20 p-8 md:p-12 flex flex-col justify-between pointer-events-none">
+              <div class="flex justify-between items-start w-full">
+                <h2 class="text-4xl md:text-5xl font-semibold tracking-tight text-white uppercase mix-blend-difference flex flex-col items-center text-center w-full">
+                  <span class="animated-title flex overflow-hidden justify-center" data-text="OROCHI"></span>
+                  <span class="text-xs font-mono tracking-widest text-gray-400 block mt-2">
+                    MAINSTREET
+                  </span>
+                </h2>
+              </div>
+              <div class="flex justify-between items-end font-mono text-[10px] tracking-widest text-gray-400 uppercase">
+                <span>2023</span>
+                <span>MODELAGEM 3D</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project Card 5 -->
+          <article class="project-card relative w-full aspect-[4/3] bg-[#0c0c0c] overflow-hidden group cursor-pointer">
+            <div class="absolute inset-0 w-full h-full z-0 overflow-hidden bg-black">
+              <div class="parallax-image absolute inset-[-10%] w-[120%] h-[120%] bg-neutral-900 transition-all duration-700 ease-out origin-center" style="transform: translate(0,0) scale(1);"></div>
+              <div class="absolute inset-0 backdrop-blur-[6px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 ease-out z-10 pointer-events-none"></div>
+            </div>
+            <div class="absolute inset-0 z-20 p-8 md:p-12 flex flex-col justify-center items-center pointer-events-none">
+              <h2 class="text-4xl md:text-5xl font-semibold tracking-tight text-gray-700 uppercase flex flex-col items-center w-full">
+                <span class="animated-title flex overflow-hidden justify-center" data-text="PROJETO C"></span>
+              </h2>
+            </div>
+          </article>
+
+          <!-- Project Card 6 -->
+          <article class="project-card relative w-full aspect-[4/3] bg-[#0c0c0c] overflow-hidden group cursor-pointer">
+            <div class="absolute inset-0 w-full h-full z-0 overflow-hidden bg-black">
+              <div class="parallax-image absolute inset-[-10%] w-[120%] h-[120%] bg-neutral-900 transition-all duration-700 ease-out origin-center" style="transform: translate(0,0) scale(1);"></div>
+              <div class="absolute inset-0 backdrop-blur-[6px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 ease-out z-10 pointer-events-none"></div>
+            </div>
+            <div class="absolute inset-0 z-20 p-8 md:p-12 flex flex-col justify-center items-center pointer-events-none">
+              <h2 class="text-4xl md:text-5xl font-semibold tracking-tight text-gray-700 uppercase flex flex-col items-center w-full">
+                <span class="animated-title flex overflow-hidden justify-center" data-text="PROJETO D"></span>
+              </h2>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- About & Contact Section -->
+      <section id="about-section" class="pt-32 pb-24 px-6 md:px-12 max-w-7xl mx-auto border-b border-white/5 relative z-20 bg-[var(--bg-color)]">
+        <h1 class="text-5xl md:text-7xl font-semibold tracking-tight text-white mb-12 uppercase mix-blend-difference">
+          SOBRE MIM
+        </h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
+          <!-- Text Block -->
+          <div class="flex flex-col gap-8 text-sm text-gray-400 font-light leading-relaxed max-w-lg">
+            <p>
+              TENHO 25 ANOS, CONTO COM 8 DE CARREIRA PROFISSIONAL EM ÁREAS COMO
+              EDIÇÃO DE VÍDEO, DESIGN GRÁFICO, 3D E VFX. TENHO ESTUDADO UI/UX E
+              CONTO COM PROJETOS NO MEU CURRÍCULO.
+            </p>
+            <p>
+              NESSA TRAJETÓRIA DE ESTUDAR E ENTENDER O QUE É DESIGN, TIVE EM
+              MINHA CARREIRA O HOTEL&amp;RESORTE QUE FOI MEU PRIMEIRO EMPREGO
+              CLT COMO AUX. DE COMUNICAÇÃO EM
+              <span class="text-white font-medium">2021</span>
+              . EM
+              <span class="text-white font-medium">2022</span>
+              ENTREI PARA A EMR QUE FOI UM DOS LUGARES QUE MAIS ME DESENVOLVI
+              TRABALHEI PRÓXIMO A PESSOAS MUITO TALENTOSAS PRÓXIMO AO PORTO
+              DIGITAL, ME DESPEDI EM 2024. COMECEI A TRABALHAR EM AGÊNCIAS COMO
+              D.A DESDE 2024 ME ESPECIALIZANDO COM O TEMPO EM 3D, MOTION
+              GRAPHICS E VFX PARA DIREÇÃO DE PROJETOS AUDIOVISUAIS.
+            </p>
+          </div>
+
+          <!-- Portrait Image -->
+          <div class="w-full aspect-[3/4] bg-[#111] overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover grayscale opacity-80" alt="About Portrait">
+          </div>
+        </div>
+      </section>
+
+      <footer id="contact-section" class="py-24 px-6 md:px-12 max-w-7xl mx-auto relative z-20 bg-[var(--bg-color)]">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
+          <!-- Left Links -->
+          <div class="flex flex-col gap-12">
+            <h2 class="text-2xl md:text-3xl font-medium tracking-tight text-white uppercase">
+              FIQUE PRÓXIMO
+            </h2>
+            <ul class="flex flex-col gap-4 text-base font-light text-gray-400">
+              <li>
+                <a href="#" class="hover:text-white transition-colors duration-300">
+                  Instagram
+                </a>
+              </li>
+              <li>
+                <a href="#" class="hover:text-white transition-colors duration-300">
+                  Whatsapp
+                </a>
+              </li>
+              <li>
+                <a href="#" class="hover:text-white transition-colors duration-300">
+                  Email
+                </a>
+              </li>
+            </ul>
+
+            <div class="mt-auto pt-12">
+              <span class="text-xs text-gray-600 block mb-2">
+                Caso prefira use o
+              </span>
+              <a href="https://www.youtube.com/results?search_query=how+to+make+a+smoke+signal" target="_blank" rel="noopener noreferrer" class="text-xs font-mono font-medium tracking-widest text-green-500 hover:text-green-400 transition-colors uppercase block w-max relative group">
+                [SINAL DE FUMAÇA]
+                <span class="absolute -bottom-1 left-0 w-0 h-px bg-green-500 transition-all duration-300 group-hover:w-full"></span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Right Input -->
+          <div class="flex flex-col gap-12 justify-start">
+            <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-white uppercase">
+              ME MANDE UM EMAIL
+            </h2>
+            <div class="w-full relative mt-8">
+              <input type="email" placeholder="seuemail@email.com.br" class="custom-input w-full pb-4 text-sm font-light text-white placeholder:text-gray-700 placeholder:font-mono placeholder:text-xs tracking-wide">
+            </div>
+          </div>
+        </div>
+      </footer>
+    </main>
+
+    <script>
+      lucide.createIcons();
+      document.addEventListener('DOMContentLoaded', () => {
+          const heroImg = document.getElementById('main-hero-img');
+          const logoItems = document.querySelectorAll('.logo-item');
+          setTimeout(() => {
+              heroImg.classList.add('revealed');
+              logoItems.forEach((logo, index) => {
+                  setTimeout(() => {
+                      logo.classList.add('revealed');
+                  }, 800 + (index * 150));
+              });
+          }, 300);
+
+          const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$*{}[]/\\<>~';
+          class TextScramble {
+              constructor(el) {
+                  this.el = el;
+                  this.update = this.update.bind(this);
+              }
+              setText(newText) {
+                  const oldText = this.el.innerText;
+                  const length = Math.max(oldText.length, newText.length);
+                  const promise = new Promise((resolve) => this.resolve = resolve);
+                  this.queue = [];
+                  for (let i = 0; i < length; i++) {
+                      const from = oldText[i] || '';
+                      const to = newText[i] || '';
+                      const start = Math.floor(Math.random() * 60);
+                      const end = start + Math.floor(Math.random() * 60);
+                      this.queue.push({ from, to, start, end });
+                  }
+                  cancelAnimationFrame(this.frameRequest);
+                  this.frame = 0;
+                  this.update();
+                  return promise;
+              }
+              update() {
+                  let output = '';
+                  let complete = 0;
+                  for (let i = 0, n = this.queue.length; i < n; i++) {
+                      let { from, to, start, end, char } = this.queue[i];
+                      if (this.frame >= end) {
+                          complete++;
+                          output += to;
+                      } else if (this.frame >= start) {
+                          if (!char || Math.random() < 0.2) {
+                              char = chars[Math.floor(Math.random() * chars.length)];
+                              this.queue[i].char = char;
+                          }
+                          output += `<span class="opacity-40 font-mono text-[0.9em]">${char}</span>`;
+                      } else {
+                          output += from;
+                      }
+                  }
+                  this.el.innerHTML = output;
+                  if (complete === this.queue.length) {
+                      this.resolve();
+                  } else {
+                      this.frameRequest = requestAnimationFrame(this.update);
+                      this.frame++;
+                  }
+              }
+          }
+
+          const heroTextEl = document.querySelector('.encrypt-text');
+          const fx = new TextScramble(heroTextEl);
+          const targetText = heroTextEl.getAttribute('data-text');
+          heroTextEl.innerHTML = '';
+          setTimeout(() => {
+              fx.setText(targetText);
+          }, 1000);
+
+          const barcodes = document.querySelectorAll('.nav-barcode');
+          barcodes.forEach(bc => {
+              const bcFx = new TextScramble(bc);
+              const targetText = bc.getAttribute('data-text');
+              const defaultText = '||||||||';
+
+              bc.addEventListener('mouseenter', () => bcFx.setText(targetText));
+              bc.addEventListener('mouseleave', () => bcFx.setText(defaultText));
+          });
+
+          const heroSection = document.getElementById('hero-section');
+          const crossContainer = document.getElementById('crosshair-container');
+          const lineV = document.getElementById('line-v');
+          const lineH = document.getElementById('line-h');
+
+          let targetX = window.innerWidth / 2;
+          let targetY = window.innerHeight / 2;
+          let currentX = targetX;
+          let currentY = targetY;
+          let isHoveringHero = false;
+
+          document.addEventListener('mousemove', (e) => {
+              targetX = e.clientX;
+              targetY = e.clientY;
+          });
+
+          heroSection.addEventListener('mouseenter', () => {
+              isHoveringHero = true;
+              crossContainer.style.opacity = '1';
+          });
+          heroSection.addEventListener('mouseleave', () => {
+              isHoveringHero = false;
+              crossContainer.style.opacity = '0';
+          });
+
+          function renderCrosshair() {
+              if (isHoveringHero) {
+                  currentX += (targetX - currentX) * 0.15;
+                  currentY += (targetY - currentY) * 0.15;
+                  lineV.style.transform = `translateX(${currentX}px)`;
+                  lineH.style.transform = `translateY(${currentY}px)`;
+              }
+              requestAnimationFrame(renderCrosshair);
+          }
+          renderCrosshair();
+
+          const filterBtn = document.getElementById('filter-btn');
+          const filterContainer = document.getElementById('filter-container');
+          const filterIcon = document.getElementById('filter-icon');
+          let isFilterOpen = false;
+
+          filterBtn.addEventListener('click', () => {
+              isFilterOpen = !isFilterOpen;
+              if (isFilterOpen) {
+                  filterContainer.style.height = filterContainer.scrollHeight + 'px';
+                  filterContainer.style.opacity = '1';
+                  filterIcon.style.transform = 'rotate(180deg)';
+              } else {
+                  filterContainer.style.height = '0';
+                  filterContainer.style.opacity = '0';
+                  filterIcon.style.transform = 'rotate(0deg)';
+              }
+          });
+
+          document.querySelectorAll('.animated-title').forEach(el => {
+              const text = el.getAttribute('data-text');
+              let html = '';
+              text.split('').forEach((char, i) => {
+                  if (char === ' ') {
+                      html += `<span class="inline-block w-3 md:w-4"></span>`;
+                  } else {
+                      html += `<span class="title-letter inline-block" style="animation-delay: ${i * 0.05}s">${char}</span>`;
+                  }
+              });
+              el.innerHTML = html;
+          });
+
+          const projectCards = document.querySelectorAll('.project-card');
+          projectCards.forEach(card => {
+              const img = card.querySelector('.parallax-image');
+              if (!img) return;
+
+              card.addEventListener('mousemove', (e) => {
+                  const rect = card.getBoundingClientRect();
+                  const x = (e.clientX - rect.left) / rect.width - 0.5;
+                  const y = (e.clientY - rect.top) / rect.height - 0.5;
+                  img.style.transform = `translate(${-x * 30}px, ${-y * 30}px) scale(1.05)`;
+              });
+
+              card.addEventListener('mouseleave', () => {
+                  img.style.transform = `translate(0px, 0px) scale(1)`;
+              });
+          });
+
+      });
+    </script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const edges = document.querySelectorAll('.header-edge');
+        const turbulence = document.querySelector('#edge-fx feTurbulence');
+        const displacement = document.querySelector('#edge-fx feDisplacementMap');
+        let time = 0;
+        function animateHeaderEdges() {
+          const scrolled = window.scrollY;
+          const factor = Math.min(scrolled / 500, 1);
+          time += 0.01;
+          const breath = Math.sin(time) * 2;
+          const width = 30 + (factor * 15) + breath;
+          const opacity = 0.85 + (factor * 0.15) + (Math.sin(time * 0.5) * 0.05);
+          edges.forEach(edge => {
+            edge.style.width = `${width}%`;
+            edge.style.opacity = opacity;
+          });
+          if (turbulence) {
+            turbulence.setAttribute('baseFrequency', `${0.002 + (Math.sin(time * 0.5) * 0.0005)}`);
+          }
+          if (displacement) {
+            displacement.setAttribute('scale', `${25 + factor * 10 + Math.sin(time) * 5}`);
+          }
+          requestAnimationFrame(animateHeaderEdges);
+        }
+        animateHeaderEdges();
+      });
+    </script>
+  
+</body></html>
