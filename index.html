@@ -15,35 +15,17 @@
       overflow-x: hidden;
       }
       .font-mono { font-family: 'JetBrains Mono', monospace; }
-      /* Cinematic Grain Overlay */
-    .film-grain {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 9999;
-
-  opacity: 0.08;
-  mix-blend-mode: overlay;
-
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-
-  animation: grainMove 0.6s steps(8) infinite;
-}
-        @keyframes grainMove {
-  0% { transform: translate(0, 0); }
-  10% { transform: translate(-5%, -10%); }
-  20% { transform: translate(-15%, 5%); }
-  30% { transform: translate(7%, -25%); }
-  40% { transform: translate(-5%, 25%); }
-  50% { transform: translate(-15%, 10%); }
-  60% { transform: translate(15%, 0%); }
-  70% { transform: translate(0%, 15%); }
-  80% { transform: translate(3%, 35%); }
-  90% { transform: translate(-10%, 10%); }
-  100% { transform: translate(0, 0); }
+      /* Cinematic Grain Overlay — animated canvas */
+      #film-grain-canvas {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.55;
+        mix-blend-mode: screen;
+        image-rendering: pixelated;
+      }
       /* Atmospheric Edge Blur */
       .edge-blur {
   position: fixed;
@@ -78,6 +60,33 @@
       transition: opacity 1s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
       }
       .fade-up.revealed { opacity: 1; transform: translateY(0); }
+      /* Logo rise */
+      .logo-rise {
+        opacity: 0;
+        transform: translateY(22px);
+        filter: blur(10px);
+        transition:
+          opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+          filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .logo-rise.revealed {
+        opacity: 0.55;
+        transform: translateY(0);
+        filter: blur(0px);
+      }
+      .logo-rise.revealed:hover { opacity: 1; transition: opacity 0.4s ease; }
+      /* Bottom scroll blur */
+      #scroll-blur-bottom {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        height: 140px;
+        pointer-events: none;
+        z-index: 45;
+        mask-image: linear-gradient(to bottom, transparent 0%, black 55%);
+        -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 55%);
+        will-change: backdrop-filter;
+      }
       /* Custom Input */
       .custom-input {
       background: transparent; border: none; border-bottom: 1px solid #333;
@@ -164,10 +173,9 @@
       </defs>
     </svg>
     <!-- Global Overlays -->
-    <div class="film-grain"></div>
-    <div class="edge-blur left"></div>
-    <div class="edge-blur right"></div>
-
+    <canvas id="film-grain-canvas"></canvas>
+    <div id="scroll-blur-bottom"></div>
+    
     <!-- Header Navigation -->
     <header class="fixed top-0 w-full z-40 border-b border-white/5 py-4 px-6 md:px-12 flex items-center justify-center gap-8 md:gap-16 bg-transparent">
       <div class="absolute inset-0 z-[-1] pointer-events-none overflow-hidden">
@@ -223,7 +231,7 @@
           <div class="lg:col-span-6 lg:col-start-4 w-full flex justify-center relative">
             <div class="w-full max-w-md aspect-[4/5] bg-[#0a0a0a] overflow-hidden relative">
               <!-- Using a high-end abstract image placeholder -->
-              <img id="main-hero-img" src="./assets/Fotocapa.jpg?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" alt="Hero Portait" class="w-full h-full object-cover clip-reveal-center grayscale hover:grayscale-0 transition-all duration-1000 ease-in-out scale-105">
+              <img id="main-hero-img" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" alt="Hero Portait" class="w-full h-full object-cover clip-reveal-center grayscale hover:grayscale-0 transition-all duration-1000 ease-in-out scale-105">
             </div>
           </div>
 
@@ -239,25 +247,12 @@
               <span class="text-[10px] font-mono uppercase tracking-widest text-gray-600 mb-2">
                 Onde pude usar minha criatividade :
               </span>
-              <div class="grid grid-cols-3 gap-x-6 gap-y-8 items-center justify-start opacity-60 hover:opacity-100 transition-opacity duration-500">
-                <!-- Logos represented structurally -->
-                <div class="logo-item fade-up">
-                  <img src="./assets/logo-coca.png" class="w-6 h-6 object-contain">
+              <div class="flex flex-row gap-8 items-center justify-start">
+                <div class="logo-rise" data-delay="1200">
+                  <img src="data:image/jpeg;base64,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" alt="ANDC" class="h-6 w-auto object-contain" style="filter:brightness(0) invert(1);">
                 </div>
-                <div class="logo-item fade-up">
-                  <i data-lucide="circle-dashed" stroke-width="1.5" class="w-6 h-6 text-white"></i>
-                </div>
-                <div class="logo-item fade-up">
-                  <i data-lucide="hexagon" stroke-width="1.5" class="w-6 h-6 text-white"></i>
-                </div>
-                <div class="logo-item fade-up">
-                  <i data-lucide="box" stroke-width="1.5" class="w-6 h-6 text-white"></i>
-                </div>
-                <div class="logo-item fade-up">
-                  <i data-lucide="compass" stroke-width="1.5" class="w-6 h-6 text-white"></i>
-                </div>
-                <div class="logo-item fade-up">
-                  <i data-lucide="aperture" stroke-width="1.5" class="w-6 h-6 text-white"></i>
+                <div class="logo-rise" data-delay="1650">
+                  <img src="data:image/jpeg;base64,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" alt="Mentos" class="h-5 w-auto object-contain" style="filter:brightness(0) invert(1);">
                 </div>
               </div>
             </div>
@@ -469,7 +464,7 @@
 </a>
               </li>
               <li>
-                <a href="mailto:xntvisuals@gmail.com">
+                <a href="/cdn-cgi/l/email-protection#fa82948e8c93898f9b9689ba9d979b9396d4999597">
   Email
 </a>
               </li>
@@ -499,19 +494,31 @@
       </footer>
     </main>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
       lucide.createIcons();
       document.addEventListener('DOMContentLoaded', () => {
           const heroImg = document.getElementById('main-hero-img');
-          const logoItems = document.querySelectorAll('.logo-item');
-          setTimeout(() => {
-              heroImg.classList.add('revealed');
-              logoItems.forEach((logo, index) => {
-                  setTimeout(() => {
-                      logo.classList.add('revealed');
-                  }, 800 + (index * 150));
-              });
-          }, 300);
+          setTimeout(() => { heroImg.classList.add('revealed'); }, 300);
+
+          // Logo rise with staggered blur-up
+          document.querySelectorAll('.logo-rise').forEach(el => {
+            const delay = parseInt(el.getAttribute('data-delay')) || 1200;
+            setTimeout(() => el.classList.add('revealed'), delay);
+          });
+
+          // Bottom scroll blur with lazy lerp
+          const scrollBlurEl = document.getElementById('scroll-blur-bottom');
+          let sbTarget = 0, sbCurrent = 0, sbRAF = null;
+          window.addEventListener('scroll', () => {
+            sbTarget = Math.min(window.scrollY / 280, 1) * 16;
+            if (!sbRAF) sbRAF = requestAnimationFrame(function tick() {
+              sbCurrent += (sbTarget - sbCurrent) * 0.08;
+              const v = sbCurrent.toFixed(3);
+              scrollBlurEl.style.backdropFilter = `blur(${v}px)`;
+              scrollBlurEl.style.webkitBackdropFilter = `blur(${v}px)`;
+              sbRAF = Math.abs(sbCurrent - sbTarget) > 0.02 ? requestAnimationFrame(tick) : null;
+            });
+          }, { passive: true });
 
           const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$*{}[]/\\<>~';
           class TextScramble {
@@ -690,12 +697,72 @@
             turbulence.setAttribute('baseFrequency', `${0.002 + (Math.sin(time * 0.5) * 0.0005)}`);
           }
           if (displacement) {
-            displacement.setAttribute('scale', `${25 + factor * 10 + Math.sin(time) * 5}`);
-          }
-          requestAnimationFrame(animateHeaderEdges);
+            displacement.setAttribute('scale', `${25 + factor * 10 + Math.sin(time) * 5
+    <!-- Animated Film Grain Canvas -->
+    <script>
+    (function() {
+      const canvas = document.getElementById('film-grain-canvas');
+      const ctx = canvas.getContext('2d');
+
+      // Render at a lower resolution and scale up — looks more like real film grain
+      const SCALE = 2.5;
+      let W, H;
+
+      function resize() {
+        W = Math.ceil(window.innerWidth / SCALE);
+        H = Math.ceil(window.innerHeight / SCALE);
+        canvas.width = W;
+        canvas.height = H;
+        canvas.style.width = '100vw';
+        canvas.style.height = '100vh';
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+
+      // Precompute 4 independent noise tiles for temporal variation
+      const TILES = 4;
+      const TILE_W = 384;
+      const TILE_H = 384;
+      const tiles = [];
+      for (let t = 0; t < TILES; t++) {
+        const td = new Uint8ClampedArray(TILE_W * TILE_H * 4);
+        for (let i = 0; i < TILE_W * TILE_H; i++) {
+          // Gaussian-ish distribution: average of 3 randoms
+          const g = ((Math.random() + Math.random() + Math.random()) / 3 * 255) | 0;
+          // Bias toward mid-gray (cinematic silver halide feel)
+          const v = (g * 0.6 + 50) | 0;
+          td[i*4]   = v;
+          td[i*4+1] = v;
+          td[i*4+2] = v;
+          td[i*4+3] = 255;
         }
-        animateHeaderEdges();
-      });
+        tiles.push(new ImageData(td, TILE_W, TILE_H));
+      }
+
+      // Offscreen canvas to hold the tile
+      const offscreen = document.createElement('canvas');
+      offscreen.width = TILE_W;
+      offscreen.height = TILE_H;
+      const offCtx = offscreen.getContext('2d');
+
+      let frameCount = 0;
+
+      function renderGrain() {
+        frameCount++;
+        // Cycle through tiles + random offset each frame
+        const tileIdx = frameCount % TILES;
+        offCtx.putImageData(tiles[tileIdx], 0, 0);
+
+        const ox = (Math.random() * (TILE_W - W)) | 0;
+        const oy = (Math.random() * (TILE_H - H)) | 0;
+
+        ctx.clearRect(0, 0, W, H);
+        ctx.drawImage(offscreen, ox, oy, W, H, 0, 0, W, H);
+
+        requestAnimationFrame(renderGrain);
+      }
+
+      renderGrain();
+    })();
     </script>
-  
-</body></html>
