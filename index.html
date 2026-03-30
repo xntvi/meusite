@@ -1,768 +1,1025 @@
-<html lang="en" class="scroll-smooth bg-[#030303] text-gray-200 selection:bg-gray-200 selection:text-black"><head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XNT PORTFÓLIO</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
-    <style>
-      :root {
-      --bg-color: #030303;
-      }
-      body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg-color);
-      overflow-x: hidden;
-      }
-      .font-mono { font-family: 'JetBrains Mono', monospace; }
-      /* Cinematic Grain Overlay — animated canvas */
-      #film-grain-canvas {
-        position: fixed;
-        top: 0; left: 0;
-        width: 100vw; height: 100vh;
-        pointer-events: none;
-        z-index: 9999;
-        opacity: 0.55;
-        mix-blend-mode: screen;
-        image-rendering: pixelated;
-      }
-      /* Atmospheric Edge Blur */
-      .edge-blur {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  width: 8vw; /* aumentei pra ficar mais visível */
-  pointer-events: none;
-  z-index: 50;
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XNT PORTFÓLIO</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg: #030303; --accent1: #0a84ff; --accent2: #0055c8; }
+    * { box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: #d4d4d4; overflow-x: hidden; margin: 0; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
 
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+    /* ===== PAGES ===== */
+    .page { display: none; min-height: 100vh; }
+    .page.active { display: block; }
 
-  /* distorção */
-  filter: url(#edge-fx);
-
-  opacity: 0.9;
-  will-change: backdrop-filter, filter;
-      }
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar { width: 4px; }
-      ::-webkit-scrollbar-track { background: var(--bg-color); }
-      ::-webkit-scrollbar-thumb { background: #222; }
-      ::-webkit-scrollbar-thumb:hover { background: #444; }
-      /* Animations */
-      .clip-reveal-center {
-      clip-path: inset(50% 0 50% 0);
-      transition: clip-path 1.6s cubic-bezier(0.85, 0, 0.15, 1);
-      }
-      .clip-reveal-center.revealed { clip-path: inset(0 0 0 0); }
-      .fade-up {
-      opacity: 0; transform: translateY(24px);
-      transition: opacity 1s cubic-bezier(0.2, 0.8, 0.2, 1), transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
-      }
-      .fade-up.revealed { opacity: 1; transform: translateY(0); }
-      /* Logo rise */
-      .logo-rise {
-        opacity: 0;
-        transform: translateY(22px);
-        filter: blur(10px);
-        transition:
-          opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1),
-          transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
-          filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-      }
-      .logo-rise.revealed {
-        opacity: 0.55;
-        transform: translateY(0);
-        filter: blur(0px);
-      }
-      .logo-rise.revealed:hover { opacity: 1; transition: opacity 0.4s ease; }
-      /* Bottom scroll blur */
-      #scroll-blur-bottom {
-        position: fixed;
-        bottom: 0; left: 0; right: 0;
-        height: 140px;
-        pointer-events: none;
-        z-index: 45;
-        mask-image: linear-gradient(to bottom, transparent 0%, black 55%);
-        -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 55%);
-        will-change: backdrop-filter;
-      }
-      /* Custom Input */
-      .custom-input {
-      background: transparent; border: none; border-bottom: 1px solid #333;
-      border-radius: 0; outline: none; transition: border-color 0.4s ease;
-      }
-      .custom-input:focus { border-bottom-color: #fff; }
-      /* Hide cursor entirely in hero */
-      #hero-section { cursor: none; }
-      /* Barcode setup */
-      .nav-link-text { display: none; }
-    </style>
-    <style>
-      @keyframes titleLoop {
-      0% { transform: translateY(100%); opacity: 0; }
-      10% { transform: translateY(0); opacity: 1; }
-      80% { transform: translateY(0); opacity: 1; }
-      90% { transform: translateY(-120%); opacity: 0; }
-      100% { transform: translateY(100%); opacity: 0; }
-      }
-      .title-letter {
-      animation: titleLoop 6s infinite cubic-bezier(0.2, 0.8, 0.2, 1);
-      display: inline-block;
-      will-change: transform, opacity;
-      }
-      .animated-title {
-      display: flex;
-      overflow: hidden;
-      }
-      .parallax-image {
-      will-change: transform;
-      }
-    </style>
-    <style>
-      /* Header Dynamic Effects */
-      .header-glass-bg {
-      position: absolute; inset: 0; z-index: -1;
-      background: linear-gradient(to bottom, rgba(3,3,3,0.5), transparent);
-      backdrop-filter: blur(2px);
-      -webkit-backdrop-filter: blur(2px);
+    /* ===== EDGE BLUR — top & bottom ===== */
+    .edge-blur-top,
+    .edge-blur-bottom {
+      position: fixed;
+      left: 0; right: 0;
+      height: 180px;
       pointer-events: none;
-      }
-      .header-edge {
-      position: absolute; top: 0; bottom: 0; width: 35%;
-      pointer-events: none; z-index: -1;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      will-change: width, opacity;
-      }
-      @supports (backdrop-filter: url(#edge-fx)) or (-webkit-backdrop-filter: url(#edge-fx)) {
-      .header-edge {
-      backdrop-filter: url(#edge-fx);
-      -webkit-backdrop-filter: url(#edge-fx);
-      }
-      }
-      .header-edge.left {
-      left: 0;
-      mask-image: linear-gradient(to right, black 0%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to right, black 0%, transparent 100%);
-      }
-      .header-edge.right {
-      right: 0;
-      mask-image: linear-gradient(to left, black 0%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to left, black 0%, transparent 100%);
-      }
-    </style>
-  </head>
-  <body class="antialiased text-base">
-    <svg style="position: absolute; width: 0; height: 0; pointer-events: none;" aria-hidden="true">
-      <defs>
-        <filter id="edge-fx" color-interpolation-filters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="12" result="blur"></feGaussianBlur>
-          <feTurbulence type="fractalNoise" baseFrequency="0.002" numOctaves="1" result="noise"></feTurbulence>
-          <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" in="noise" result="warp-map"></feColorMatrix>
-          <feDisplacementMap in="blur" in2="warp-map" scale="25" xChannelSelector="R" yChannelSelector="G" result="warped"></feDisplacementMap>
-          <feOffset dx="5" dy="0" in="warped" result="offsetR"></feOffset>
-          <feOffset dx="-5" dy="0" in="warped" result="offsetB"></feOffset>
-          <feOffset dx="0" dy="0" in="warped" result="offsetG"></feOffset>
-          <feColorMatrix type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" in="offsetR" result="red"></feColorMatrix>
-          <feColorMatrix type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" in="offsetG" result="green"></feColorMatrix>
-          <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" in="offsetB" result="blue"></feColorMatrix>
-          <feBlend mode="screen" in="red" in2="green" result="rg"></feBlend>
-          <feBlend mode="screen" in="rg" in2="blue" result="rgb"></feBlend>
-        </filter>
-      </defs>
-    </svg>
-    <!-- Global Overlays -->
-    <canvas id="film-grain-canvas"></canvas>
-    <div id="scroll-blur-bottom"></div>
-    
-    <!-- Header Navigation -->
-    <header class="fixed top-0 w-full z-40 border-b border-white/5 py-4 px-6 md:px-12 flex items-center justify-center gap-8 md:gap-16 bg-transparent">
-      <div class="absolute inset-0 z-[-1] pointer-events-none overflow-hidden">
-        <div class="header-glass-bg"></div>
-        <div class="header-edge left"></div>
-        <div class="header-edge right"></div>
-      </div>
-      <div class="flex gap-6 md:gap-8">
-        <a href="#hero-section" class="nav-barcode text-xs font-mono tracking-widest text-gray-500 hover:text-white transition-colors duration-500" data-text="INICIO">
-          ||||||||
-        </a>
-        <a href="#works-section" class="nav-barcode text-xs font-mono tracking-widest text-gray-500 hover:text-white transition-colors duration-500" data-text="TRABALHOS">
-          ||||||||
-        </a>
-      </div>
+      z-index: 35;
+      will-change: backdrop-filter;
+    }
+    .edge-blur-top {
+      top: 0;
+      backdrop-filter: blur(42px) saturate(0.4) brightness(0.6);
+      -webkit-backdrop-filter: blur(42px) saturate(0.4) brightness(0.6);
+      mask-image: linear-gradient(to bottom,
+        black 0%,
+        black 30%,
+        rgba(0,0,0,0.7) 55%,
+        rgba(0,0,0,0.2) 78%,
+        transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom,
+        black 0%,
+        black 30%,
+        rgba(0,0,0,0.7) 55%,
+        rgba(0,0,0,0.2) 78%,
+        transparent 100%);
+    }
+    .edge-blur-bottom {
+      bottom: 0;
+      height: 200px;
+      backdrop-filter: blur(52px) saturate(0.3) brightness(0.45);
+      -webkit-backdrop-filter: blur(52px) saturate(0.3) brightness(0.45);
+      mask-image: linear-gradient(to top,
+        black 0%,
+        black 35%,
+        rgba(0,0,0,0.75) 58%,
+        rgba(0,0,0,0.2) 80%,
+        transparent 100%);
+      -webkit-mask-image: linear-gradient(to top,
+        black 0%,
+        black 35%,
+        rgba(0,0,0,0.75) 58%,
+        rgba(0,0,0,0.2) 80%,
+        transparent 100%);
+    }
 
-      <div class="flex justify-center">
-        <span class="text-xl font-medium tracking-tight text-white select-none relative group cursor-pointer">
-          XNT
-          <span class="absolute -bottom-1 left-0 w-0 h-px bg-white transition-all duration-500 group-hover:w-full"></span>
-        </span>
-      </div>
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #1a1a1a; }
 
-      <div class="flex gap-6 md:gap-8">
-        <a href="#about-section" class="nav-barcode text-xs font-mono tracking-widest text-gray-500 hover:text-white transition-colors duration-500" data-text="SOBRE">
-          ||||||||
-        </a>
-        <a href="#contact-section" class="nav-barcode text-xs font-mono tracking-widest text-gray-500 hover:text-white transition-colors duration-500" data-text="CONTATO">
-          ||||||||
-        </a>
-      </div>
-    </header>
+    /* ===== NAV ===== */
+    header {
+      position: fixed; top: 0; width: 100%; z-index: 40;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      padding: 0 48px;
+      height: 60px;
+      display: flex; align-items: center; justify-content: center; gap: 64px;
+      backdrop-filter: blur(24px) saturate(0.5) brightness(0.7);
+      -webkit-backdrop-filter: blur(24px) saturate(0.5) brightness(0.7);
+      background: rgba(3,3,3,0.35);
+    }
+    .nav-barcode {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; letter-spacing: 0.08em;
+      color: #2a2a2a; cursor: pointer;
+      transition: color 0.35s ease, letter-spacing 0.35s ease;
+      user-select: none; line-height: 1;
+      position: relative;
+    }
+    .nav-barcode:hover { color: #aaa; letter-spacing: 0.14em; }
+    .nav-barcode .nav-label {
+      position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%);
+      font-size: 8px; letter-spacing: 0.3em; color: #333; white-space: nowrap;
+      opacity: 0; transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    .nav-barcode:hover .nav-label { opacity: 1; }
+    .nav-logo { font-size: 17px; font-weight: 500; color: #fff; cursor: pointer; letter-spacing: 0.05em; }
 
-    <!-- Crosshair Elements (JS Controlled, Fixed to Viewport) -->
-    <div id="crosshair-container" class="fixed inset-0 pointer-events-none z-30 opacity-0 transition-opacity duration-700">
-      <div id="line-v" class="absolute top-0 bottom-0 w-[1px] bg-white/20 origin-top">
-        <div class="absolute top-1/2 left-4 -translate-y-1/2 origin-left rotate-90 text-[10px] font-mono tracking-widest text-white/50 whitespace-nowrap mix-blend-difference">
-          PERNAMBUCO
+    /* ===== HERO DOTS ===== */
+    #hero-dots {
+      position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+    }
+    @keyframes dot-pulse {
+      0%, 100% { opacity: 0.06; transform: scale(1); }
+      50% { opacity: 0.22; transform: scale(1.6); }
+    }
+    .hero-dot {
+      position: absolute; border-radius: 50%;
+      width: 2px; height: 2px; background: #fff;
+      animation: dot-pulse linear infinite;
+    }
+
+    /* ===== HERO ===== */
+    #hero-section { cursor: none; }
+    .crosshair-line { position: fixed; pointer-events: none; z-index: 30; background: rgba(255,255,255,0.12); transition: opacity 0.5s; }
+
+    /* ===== FILTER BUTTON ===== */
+    #filter-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      background: none; border: none; cursor: pointer; padding: 8px;
+      position: relative;
+    }
+    #filter-btn-pill {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 20px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #0a84ff 0%, #0033aa 60%, #000820 100%);
+      border: 1px solid rgba(10,132,255,0.4);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.2em;
+      color: #90c4ff;
+      transition: all 0.4s ease;
+      box-shadow: 0 0 20px rgba(10,132,255,0.15), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    #filter-btn:hover #filter-btn-pill {
+      box-shadow: 0 0 35px rgba(10,132,255,0.35), inset 0 1px 0 rgba(255,255,255,0.12);
+      color: #c0dcff;
+      border-color: rgba(10,132,255,0.7);
+    }
+    #filter-icon {
+      width: 14px; height: 14px; display: inline-block;
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+    #filter-icon svg { width: 14px; height: 14px; stroke: #90c4ff; fill: none; stroke-width: 1.5; }
+    #filter-btn.open #filter-icon { transform: rotate(180deg); }
+    #filter-btn.open #filter-btn-pill {
+      background: linear-gradient(135deg, #0a84ff 0%, #0044cc 60%, #001540 100%);
+      box-shadow: 0 0 40px rgba(10,132,255,0.4), inset 0 1px 0 rgba(255,255,255,0.12);
+      color: #d0e8ff;
+    }
+
+    /* ===== FILTER CONTAINER ===== */
+    #filter-container {
+      overflow: hidden; max-height: 0;
+      transition: max-height 0.7s cubic-bezier(0.16,1,0.3,1), opacity 0.5s ease;
+      opacity: 0; width: 100%; max-width: 760px;
+    }
+    #filter-container.open { max-height: 200px; opacity: 1; }
+
+    .filter-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px; letter-spacing: 0.2em;
+      color: #555; cursor: pointer;
+      padding: 6px 16px; border-radius: 999px;
+      border: 1px solid #1a1a1a;
+      background: transparent;
+      transition: all 0.3s ease;
+    }
+    .filter-tag:hover { color: #aaa; border-color: #333; }
+    .filter-tag.active {
+      color: #90c4ff;
+      border-color: rgba(10,132,255,0.5);
+      background: rgba(10,132,255,0.08);
+      box-shadow: 0 0 12px rgba(10,132,255,0.15);
+    }
+
+    /* ===== PROJECT CARDS ===== */
+    .project-card {
+      position: relative; width: 100%; aspect-ratio: 4/3;
+      background: #0c0c0c; overflow: hidden; cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .project-card[data-hidden="true"] {
+      display: none;
+    }
+    .project-card .card-img {
+      position: absolute; inset: -10%; width: 120%; height: 120%;
+      object-fit: cover; opacity: 0.3; filter: grayscale(1);
+      transition: opacity 0.7s ease, transform 0.7s ease, filter 0.7s ease;
+      transform-origin: center;
+    }
+    .project-card:hover .card-img { opacity: 0.55; filter: grayscale(0); transform: scale(1.05); }
+    .project-card .card-overlay { position: absolute; inset: 0; z-index: 5; }
+    .project-card .card-content { position: absolute; inset: 0; z-index: 20; padding: 40px 48px; display: flex; flex-direction: column; justify-content: space-between; }
+    .card-title { font-size: clamp(32px, 4vw, 52px); font-weight: 600; letter-spacing: -0.02em; color: #fff; text-transform: uppercase; mix-blend-mode: difference; }
+    .card-meta { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.2em; color: #666; text-transform: uppercase; display: flex; justify-content: space-between; }
+    .card-badge { font-size: 10px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.15em; margin-top: 6px; display: block; }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes letter-loop {
+      0%   { transform: translateY(100%); opacity: 0; }
+      10%  { transform: translateY(0); opacity: 1; }
+      80%  { transform: translateY(0); opacity: 1; }
+      90%  { transform: translateY(-120%); opacity: 0; }
+      100% { transform: translateY(100%); opacity: 0; }
+    }
+    .animated-letter { display: inline-block; animation: letter-loop 6s infinite cubic-bezier(0.2,0.8,0.2,1); will-change: transform, opacity; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-up { animation: fadeUp 0.9s cubic-bezier(0.2,0.8,0.2,1) both; }
+
+    /* ===== PROJECT PAGE ===== */
+    #project-page { background: var(--bg); }
+
+    .proj-hero {
+      position: relative; width: 100%; height: 90vh; overflow: hidden;
+      display: flex; align-items: flex-end;
+    }
+    .proj-hero-img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; filter: grayscale(0.6) brightness(0.4);
+      transition: filter 2s ease;
+    }
+    .proj-hero:hover .proj-hero-img { filter: grayscale(0.2) brightness(0.5); }
+    .proj-hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(3,3,3,1) 0%, rgba(3,3,3,0.4) 50%, transparent 100%);
+    }
+    .proj-hero-content { position: relative; z-index: 10; padding: 60px 64px; width: 100%; }
+    .proj-hero-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.3em; color: #0a84ff; text-transform: uppercase; margin-bottom: 12px; }
+    .proj-hero-title { font-size: clamp(56px, 7vw, 100px); font-weight: 600; letter-spacing: -0.03em; color: #fff; text-transform: uppercase; line-height: 0.9; margin-bottom: 20px; }
+    .proj-hero-tags { display: flex; gap: 10px; flex-wrap: wrap; }
+    .proj-tag {
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      letter-spacing: 0.15em; color: #90c4ff;
+      border: 1px solid rgba(10,132,255,0.35); border-radius: 999px;
+      padding: 5px 14px; background: rgba(10,132,255,0.07);
+    }
+
+    .proj-body { max-width: 1100px; margin: 0 auto; padding: 80px 64px 120px; }
+    .proj-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; margin-bottom: 80px; align-items: start; }
+    .proj-intro-text { font-size: 16px; line-height: 1.8; color: #888; font-weight: 300; }
+    .proj-intro-text p + p { margin-top: 20px; }
+    .proj-intro-text .highlight { color: #fff; font-weight: 400; }
+    .proj-client-card {
+      background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 2px;
+      padding: 28px 32px;
+    }
+    .proj-client-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.3em; color: #444; text-transform: uppercase; margin-bottom: 16px; }
+    .proj-client-name { font-size: 22px; font-weight: 500; color: #fff; margin-bottom: 8px; }
+    .proj-client-role { font-size: 12px; color: #555; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em; }
+    .proj-divider { width: 100%; height: 1px; background: #111; margin: 64px 0; }
+
+    .proj-media-full { width: 100%; aspect-ratio: 16/9; overflow: hidden; margin-bottom: 2px; }
+    .proj-media-full img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(0.2); transition: filter 1s ease; }
+    .proj-media-full img:hover { filter: grayscale(0); }
+    .proj-media-full iframe { width: 100%; height: 100%; border: none; }
+
+    .proj-media-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-bottom: 64px; }
+    .proj-media-grid-item { aspect-ratio: 4/3; overflow: hidden; }
+    .proj-media-grid-item img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(0.2); transition: all 0.8s ease; }
+    .proj-media-grid-item img:hover { filter: grayscale(0); transform: scale(1.03); }
+
+    .proj-details-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #111; margin-bottom: 80px; }
+    .proj-detail-item { background: var(--bg); padding: 28px 24px; }
+    .proj-detail-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.3em; color: #333; text-transform: uppercase; margin-bottom: 10px; }
+    .proj-detail-value { font-size: 14px; color: #aaa; line-height: 1.6; }
+
+    .proj-section-title {
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      letter-spacing: 0.3em; color: #333; text-transform: uppercase;
+      margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
+    }
+    .proj-section-title::after { content: ''; flex: 1; height: 1px; background: #111; }
+
+    .proj-quote {
+      border-left: 1px solid rgba(10,132,255,0.4);
+      padding: 20px 32px; margin: 48px 0;
+      color: #666; font-size: 15px; line-height: 1.8; font-style: italic;
+    }
+    .proj-quote span { color: #aaa; }
+
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'JetBrains Mono', monospace; font-size: 10px;
+      letter-spacing: 0.2em; color: #555;
+      background: none; border: none; cursor: pointer;
+      padding: 8px 0; margin-bottom: 48px;
+      transition: color 0.3s ease;
+    }
+    .back-btn:hover { color: #fff; }
+    .back-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.5; }
+
+    /* ===== CUSTOM INPUT ===== */
+    .custom-input {
+      background: transparent; border: none; border-bottom: 1px solid #1a1a1a;
+      outline: none; color: #fff; transition: border-color 0.4s ease;
+      padding-bottom: 12px; font-size: 14px; width: 100%;
+    }
+    .custom-input::placeholder { color: #2a2a2a; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+    .custom-input:focus { border-bottom-color: #fff; }
+
+    /* ===== LOGO RISE ===== */
+    .logo-rise { opacity: 0; transform: translateY(16px); filter: blur(8px); transition: opacity 1.2s, transform 1.2s, filter 1.2s; }
+    .logo-rise.up { opacity: 0.5; transform: translateY(0); filter: blur(0); }
+    .logo-rise.up:hover { opacity: 1; }
+
+    /* ===== CLIP REVEAL ===== */
+    .clip-reveal { clip-path: inset(50% 0 50% 0); transition: clip-path 1.6s cubic-bezier(0.85,0,0.15,1); }
+    .clip-reveal.revealed { clip-path: inset(0 0 0 0); }
+
+    /* ===== ABOUT ENCRYPT ===== */
+    .encrypt-text span.ghost { opacity: 0.35; font-family: 'JetBrains Mono', monospace; }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state { grid-column: 1 / -1; padding: 80px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: #222; }
+
+    @media (max-width: 768px) {
+      header { padding: 14px 20px; gap: 24px; }
+      .proj-hero-content { padding: 32px 24px; }
+      .proj-body { padding: 48px 24px 80px; }
+      .proj-intro { grid-template-columns: 1fr; }
+      .proj-details-grid { grid-template-columns: 1fr 1fr; }
+      .proj-media-grid { grid-template-columns: 1fr; }
+      .card-content { padding: 24px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="edge-blur-top"></div>
+<div class="edge-blur-bottom"></div>
+
+<!-- ============================
+     MAIN PORTFOLIO PAGE
+     ============================ -->
+<div id="main-page" class="page active">
+  <header>
+    <div style="display:flex; gap:40px; align-items:center;">
+      <span class="nav-barcode" onclick="scrollToSection('hero-section')">
+        |||&nbsp;||&nbsp;||||&nbsp;||
+        <span class="nav-label">INÍCIO</span>
+      </span>
+      <span class="nav-barcode" onclick="scrollToSection('works-section')">
+        ||&nbsp;||||&nbsp;||&nbsp;|||
+        <span class="nav-label">TRABALHOS</span>
+      </span>
+    </div>
+    <span class="nav-logo">XNT</span>
+    <div style="display:flex; gap:40px; align-items:center;">
+      <span class="nav-barcode" onclick="scrollToSection('about-section')">
+        ||||&nbsp;|&nbsp;|||&nbsp;||||
+        <span class="nav-label">SOBRE</span>
+      </span>
+      <span class="nav-barcode" onclick="scrollToSection('contact-section')">
+        ||&nbsp;|||&nbsp;||||&nbsp;||
+        <span class="nav-label">CONTATO</span>
+      </span>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section id="hero-section" style="min-height:100vh; padding: 128px 48px 96px; display:flex; align-items:center; justify-content:center; border-bottom:1px solid rgba(255,255,255,0.05); position:relative; overflow:hidden; cursor:none;">
+
+    <!-- pulsing dots background -->
+    <div id="hero-dots"></div>
+
+    <div style="width:100%; max-width:1200px; display:grid; grid-template-columns: 1fr 6fr 3fr; gap:32px; align-items:center; position:relative; z-index:2;">
+      <div></div>
+      <div style="display:flex; justify-content:center;">
+        <div style="width:100%; max-width:440px; aspect-ratio:4/5; background:#0a0a0a; overflow:hidden; position:relative;">
+          <img id="main-hero-img" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop"
+            alt="Hero" class="clip-reveal" style="width:100%; height:100%; object-fit:cover; filter:grayscale(1); transition:filter 1s ease; transform:scale(1.05);">
         </div>
       </div>
-      <div id="line-h" class="absolute left-0 right-0 h-[1px] bg-white/20 origin-left">
-        <div class="absolute left-1/2 bottom-4 -translate-x-1/2 text-[10px] font-mono tracking-widest text-white/50 whitespace-nowrap mix-blend-difference">
-          ONDE [-34.926313 -8.151969]
+      <div style="display:flex; flex-direction:column; gap:48px; margin-top:48px;">
+        <p class="encrypt-text" data-text="Prefiro pensar que não sou uma coisa só. Direção de arte, vídeo, fotografia são algumas das linguagens diferentes para a mesma intenção. Eu crio."
+          style="font-size:13px; font-weight:300; color:#555; line-height:1.9; max-width:300px;"></p>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <span style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.3em; color:#2a2a2a; text-transform:uppercase;">Onde pude usar minha criatividade:</span>
+          <div style="display:flex; gap:32px; align-items:center;">
+            <div class="logo-rise" data-delay="1200">
+              <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAgEASABIAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAAhADwDAREAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD+WOX9hX4U2/7KupfHm/8AiX4dsvEj+HNDuvC3w8t9Zv7vxvrd/eXnirTtZu77TLq30610260" alt="ANDC" style="height:20px; width:auto; object-fit:contain; filter:brightness(0) invert(1);">
+            </div>
+            <div class="logo-rise" data-delay="1650">
+              <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAgEASABIAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAAPAEYDAREAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD76+Pf/ByP+038NP8Agox8Z/8Agmx8Iv8Agm9rn7Q3xe+H3iHxnpfgK68GftUeEdMv/iN4b0H4cXHxb0bxodI1D9mp9J0WG9+Gscfi7WdEXxJqEumILnRdP1HWb6KCS8APhrwh/wAHeX7V3xB/Z1+KPxu8E/8ABNq51/wz+zn4g8Bf8NA/FK3/AGh9CTwN4M0P4s6/L4W+GFhd6RP8CYNbTVfFviWy1PRLWWwbUorKSyjvLzfFfeTYgH2x8VP+DrzwRffCH9hmD9mn9ne08T/tT/tn6WNRu/hj8YvjT4U+Gnwx+ATQ/EjxL8J7eb4lfFvUtCt9D13RvEnijwlrepaHerD8MkHgK3t/GfiS88F3N/aeFJQD" alt="Mentos" style="height:16px; width:auto; object-fit:contain; filter:brightness(0) invert(1);">
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <main>
-      <!-- Hero Section -->
-      <section id="hero-section" class="relative min-h-screen pt-32 pb-24 px-6 md:px-12 flex flex-col items-center justify-center border-b border-white/5 overflow-hidden">
-        <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center relative z-10">
-          <!-- Center Image Area (Spans 6 cols) -->
-          <div class="lg:col-span-6 lg:col-start-4 w-full flex justify-center relative">
-            <div class="w-full max-w-md aspect-[4/5] bg-[#0a0a0a] overflow-hidden relative">
-              <!-- Using a high-end abstract image placeholder -->
-              <img id="main-hero-img" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" alt="Hero Portait" class="w-full h-full object-cover clip-reveal-center grayscale hover:grayscale-0 transition-all duration-1000 ease-in-out scale-105">
-            </div>
-          </div>
+    <!-- crosshair — exact intersection point + aligned coords -->
+    <div id="crosshair" style="position:fixed; inset:0; pointer-events:none; z-index:30; opacity:0; transition:opacity 0.5s;">
+      <div id="cv" style="position:absolute; top:0; bottom:0; width:1px; background:rgba(255,255,255,0.15); will-change:transform;"></div>
+      <div id="ch" style="position:absolute; left:0; right:0; height:1px; background:rgba(255,255,255,0.15); will-change:transform;"></div>
+      <div id="cdot" style="position:absolute; width:4px; height:4px; border-radius:50%; background:#fff; opacity:0.9; will-change:transform;"></div>
+      <!-- LAT label — sits just above the horizontal line, right of vertical line -->
+      <div id="clabel-lat" style="position:absolute; will-change:transform; pointer-events:none;">
+        <span style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:0.25em; color:rgba(255,255,255,0.3); white-space:nowrap; display:block;">LAT -8.1619°</span>
+      </div>
+      <!-- LON label — sits just below the horizontal line, right of vertical line -->
+      <div id="clabel-lon" style="position:absolute; will-change:transform; pointer-events:none;">
+        <span style="font-family:'JetBrains Mono',monospace; font-size:8px; letter-spacing:0.25em; color:rgba(255,255,255,0.3); white-space:nowrap; display:block;">LON -35.0319° — MONTE GUARARAPES</span>
+      </div>
+    </div>
+  </section>
 
-          <!-- Right Content Area -->
-          <div class="lg:col-span-3 lg:col-start-10 flex flex-col gap-16 mt-12 lg:mt-0">
-            <!-- Scrambled Text -->
-            <p class="text-sm font-light text-gray-400 leading-relaxed max-w-xs encrypt-text" data-text="Gosto de pensar que sou muitas coisas entre elas Diretor de arte, Editor de vídeos, Fotógrafo... acho que sou uma pessoa criativa.">
-              <!-- Content injected via JS -->
-            </p>
-
-            <!-- Logos Container -->
-            <div class="flex flex-col gap-4">
-              <span class="text-[10px] font-mono uppercase tracking-widest text-gray-600 mb-2">
-                Onde pude usar minha criatividade :
-              </span>
-              <div class="flex flex-row gap-8 items-center justify-start">
-                <div class="logo-rise" data-delay="1200">
-                  <img src="data:image/jpeg;base64,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" alt="ANDC" class="h-6 w-auto object-contain" style="filter:brightness(0) invert(1);">
-                </div>
-                <div class="logo-rise" data-delay="1650">
-                  <img src="data:image/jpeg;base64,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" alt="Mentos" class="h-5 w-auto object-contain" style="filter:brightness(0) invert(1);">
-                </div>
-              </div>
-            </div>
-          </div>
+  <!-- WORKS -->
+  <section id="works-section" style="padding-top:48px; background:#050505; position:relative; z-index:20;">
+    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; margin-bottom:32px; border-bottom:1px solid rgba(255,255,255,0.04); padding-bottom:32px;">
+      <div style="width:1px; height:32px; background:linear-gradient(to bottom, transparent, rgba(255,255,255,0.15)); margin-bottom:16px;"></div>
+      <button id="filter-btn" onclick="toggleFilter()" aria-label="Filtrar projetos">
+        <div id="filter-btn-pill">
+          <span>FILTRAR PROJETOS</span>
+          <span id="filter-icon">
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
         </div>
-      </section>
-
-      <!-- Filtered Projects Section -->
-      <section id="works-section" class="py-12 bg-[#050505] relative z-20">
-        <!-- Filter Toggle -->
-        <div class="flex flex-col items-center justify-center mb-12 border-b border-white/5 pb-8 relative group">
-          <button id="filter-btn" class="flex flex-col items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-gray-500 hover:text-white transition-colors">
-            <span class="w-px h-8 bg-gradient-to-b from-transparent to-white/20 mb-2 group-hover:to-white/50 transition-colors"></span>
-            <i data-lucide="chevron-down" stroke-width="1.5" id="filter-icon" class="w-4 h-4 transition-transform duration-500 ease-in-out"></i>
-          </button>
-
-          <!-- Expandable Filter List -->
-          <div id="filter-container" class="w-full max-w-3xl overflow-hidden h-0 transition-all duration-700 ease-in-out opacity-0">
-            <div class="flex flex-wrap justify-center gap-x-8 gap-y-4 pt-12 pb-4">
-              <button class="text-xs font-mono tracking-widest text-white transition-colors">
-                3D
-              </button>
-              <button class="text-xs font-mono tracking-widest text-gray-600 hover:text-white transition-colors">
-                UI/UX
-              </button>
-              <button class="text-xs font-mono tracking-widest text-gray-600 hover:text-white transition-colors">
-                DESIGN GRÁFICO
-              </button>
-              <button class="text-xs font-mono tracking-widest text-gray-600 hover:text-white transition-colors">
-                VIDEO EDITING
-              </button>
-              <button class="text-xs font-mono tracking-widest text-gray-600 hover:text-white transition-colors">
-                MOTION DESIGN
-              </button>
-              <button class="text-xs font-mono tracking-widest text-gray-600 hover:text-white transition-colors">
-                DIREÇÃO DE ARTE
-              </button>
-            </div>
-          </div>
+      </button>
+      <div id="filter-container">
+        <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:10px; padding:24px 16px 8px;">
+          <button class="filter-tag active" data-filter="all" onclick="setFilter('all', this)">TODOS</button>
+          <button class="filter-tag" data-filter="3d" onclick="setFilter('3d', this)">3D</button>
+          <button class="filter-tag" data-filter="ui-ux" onclick="setFilter('ui-ux', this)">UI/UX</button>
+          <button class="filter-tag" data-filter="design-grafico" onclick="setFilter('design-grafico', this)">DESIGN GRÁFICO</button>
+          <button class="filter-tag" data-filter="video-editing" onclick="setFilter('video-editing', this)">VIDEO EDITING</button>
+          <button class="filter-tag" data-filter="motion-design" onclick="setFilter('motion-design', this)">MOTION DESIGN</button>
+          <button class="filter-tag" data-filter="direcao-arte" onclick="setFilter('direcao-arte', this)">DIREÇÃO DE ARTE</button>
         </div>
+      </div>
+    </div>
 
-        <!-- Project Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-1 bg-white/5 border-y border-white/5 max-w-[100vw] overflow-hidden">
-          <!-- Project Card 1 -->
-          <article class="project-card relative w-full aspect-[4/3] bg-[#0c0c0c] overflow-hidden group cursor-pointer">
-            <div class="absolute inset-0 w-full h-full z-0 overflow-hidden bg-black">
-              <img src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" class="parallax-image absolute inset-[-10%] w-[120%] h-[120%] object-cover opacity-30 grayscale group-hover:opacity-50 transition-all duration-700 ease-out origin-center" style="transform: translate(0,0) scale(1);" alt="Project background">
-              <div class="absolute inset-0 backdrop-blur-[6px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 ease-out z-10 pointer-events-none"></div>
-            </div>
-            <div class="absolute inset-0 z-20 p-8 md:p-12 flex flex-col justify-between pointer-events-none">
-              <div class="flex justify-between items-start">
-                <h2 class="text-4xl md:text-5xl font-semibold tracking-tight text-white uppercase mix-blend-difference flex flex-col items-start w-full">
-                  <span class="animated-title flex overflow-hidden" data-text="COCA-COLA"></span>
-                </h2>
-              </div>
-              <div class="flex justify-between items-end font-mono text-[10px] tracking-widest text-gray-400 uppercase">
-                <span>2025</span>
-                <span>MOTION DESIGN</span>
-              </div>
-            </div>
-          </article>
+    <div id="projects-grid" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:1px; background:rgba(255,255,255,0.04); border-top:1px solid rgba(255,255,255,0.04); border-bottom:1px solid rgba(255,255,255,0.04);">
 
-          <!-- Project Card 2 -->
-          <article class="project-card relative w-full aspect-[4/3] bg-[#0c0c0c] overflow-hidden group cursor-pointer">
-            <div class="absolute inset-0 w-full h-full z-0 overflow-hidden bg-black">
-              <img src="https://images.unsplash.com/photo-1550684376-efcbd6e3f031?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" class="parallax-image absolute inset-[-10%] w-[120%] h-[120%] object-cover opacity-30 grayscale group-hover:opacity-50 transition-all duration-700 ease-out origin-center" style="transform: translate(0,0) scale(1);" alt="Project background">
-              <div class="absolute inset-0 backdrop-blur-[6px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 ease-out z-10 pointer-events-none"></div>
-            </div>
-            <div class="absolute inset-0 z-20 p-8 md:p-12 flex flex-col justify-between pointer-events-none">
-              <div class="flex justify-between items-start w-full relative">
-                <h2 class="text-4xl md:text-5xl font-semibold tracking-tight text-white uppercase mix-blend-difference flex flex-col items-center text-center w-full">
-                  <span class="animated-title flex overflow-hidden justify-center" data-text="CARNAVAL"></span>
-                  <span class="text-xs font-mono tracking-widest text-blue-500/80 block mt-2">
-                    RECIFE
-                  </span>
-                </h2>
-              </div>
-              <div class="flex justify-between items-end font-mono text-[10px] tracking-widest text-gray-400 uppercase">
-                <span>2024</span>
-                <span>EDIÇÃO DE VÍDEO</span>
-              </div>
-            </div>
-          </article>
-
-          <!-- Project Card 3 -->
-          <article class="project-card relative w-full aspect-[4/3] bg-[#0c0c0c] overflow-hidden group cursor-pointer">
-            <div class="absolute inset-0 w-full h-full z-0 overflow-hidden bg-black">
-              <img src="https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" class="parallax-image absolute inset-[-10%] w-[120%] h-[120%] object-cover opacity-30 grayscale group-hover:opacity-50 transition-all duration-700 ease-out origin-center" style="transform: translate(0,0) scale(1);" alt="Project background">
-              <div class="absolute inset-0 backdrop-blur-[6px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 ease-out z-10 pointer-events-none"></div>
-            </div>
-            <div class="absolute inset-0 z-20 p-8 md:p-12 flex flex-col justify-between pointer-events-none">
-              <div class="flex justify-between items-start">
-                <h2 class="text-4xl md:text-5xl font-semibold tracking-tight text-white uppercase mix-blend-difference flex flex-col items-start w-full">
-                  <span class="animated-title flex overflow-hidden" data-text="GUARARAPES"></span>
-                  <span class="text-xs font-mono tracking-widest text-yellow-600/80 block mt-2">
-                    SHOPPING
-                  </span>
-                </h2>
-              </div>
-              <div class="flex justify-between items-end font-mono text-[10px] tracking-widest text-gray-400 uppercase">
-                <span>2025</span>
-                <span>EDIÇÃO DE VÍDEO</span>
-              </div>
-            </div>
-          </article>
-
-          <!-- Project Card 4 -->
-          <article class="project-card relative w-full aspect-[4/3] bg-[#0c0c0c] overflow-hidden group cursor-pointer">
-            <div class="absolute inset-0 w-full h-full z-0 overflow-hidden bg-black">
-              <img src="https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" class="parallax-image absolute inset-[-10%] w-[120%] h-[120%] object-cover opacity-30 grayscale group-hover:opacity-50 transition-all duration-700 ease-out origin-center" style="transform: translate(0,0) scale(1);" alt="Project background">
-              <div class="absolute inset-0 backdrop-blur-[6px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 ease-out z-10 pointer-events-none"></div>
-            </div>
-            <div class="absolute inset-0 z-20 p-8 md:p-12 flex flex-col justify-between pointer-events-none">
-              <div class="flex justify-between items-start w-full">
-                <h2 class="text-4xl md:text-5xl font-semibold tracking-tight text-white uppercase mix-blend-difference flex flex-col items-center text-center w-full">
-                  <span class="animated-title flex overflow-hidden justify-center" data-text="OROCHI"></span>
-                  <span class="text-xs font-mono tracking-widest text-gray-400 block mt-2">
-                    MAINSTREET
-                  </span>
-                </h2>
-              </div>
-              <div class="flex justify-between items-end font-mono text-[10px] tracking-widest text-gray-400 uppercase">
-                <span>2023</span>
-                <span>MODELAGEM 3D</span>
-              </div>
-            </div>
-          </article>
-
-          <!-- Project Card 5 -->
-          <article class="project-card relative w-full aspect-[4/3] bg-[#0c0c0c] overflow-hidden group cursor-pointer">
-            <div class="absolute inset-0 w-full h-full z-0 overflow-hidden bg-black">
-              <div class="parallax-image absolute inset-[-10%] w-[120%] h-[120%] bg-neutral-900 transition-all duration-700 ease-out origin-center" style="transform: translate(0,0) scale(1);"></div>
-              <div class="absolute inset-0 backdrop-blur-[6px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 ease-out z-10 pointer-events-none"></div>
-            </div>
-            <div class="absolute inset-0 z-20 p-8 md:p-12 flex flex-col justify-center items-center pointer-events-none">
-              <h2 class="text-4xl md:text-5xl font-semibold tracking-tight text-gray-700 uppercase flex flex-col items-center w-full">
-                <span class="animated-title flex overflow-hidden justify-center" data-text="PROJETO C"></span>
-              </h2>
-            </div>
-          </article>
-
-          <!-- Project Card 6 -->
-          <article class="project-card relative w-full aspect-[4/3] bg-[#0c0c0c] overflow-hidden group cursor-pointer">
-            <div class="absolute inset-0 w-full h-full z-0 overflow-hidden bg-black">
-              <div class="parallax-image absolute inset-[-10%] w-[120%] h-[120%] bg-neutral-900 transition-all duration-700 ease-out origin-center" style="transform: translate(0,0) scale(1);"></div>
-              <div class="absolute inset-0 backdrop-blur-[6px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 ease-out z-10 pointer-events-none"></div>
-            </div>
-            <div class="absolute inset-0 z-20 p-8 md:p-12 flex flex-col justify-center items-center pointer-events-none">
-              <h2 class="text-4xl md:text-5xl font-semibold tracking-tight text-gray-700 uppercase flex flex-col items-center w-full">
-                <span class="animated-title flex overflow-hidden justify-center" data-text="PROJETO D"></span>
-              </h2>
-            </div>
-          </article>
+      <!-- CARD 1: COCA-COLA -->
+      <article class="project-card" data-categories="motion-design" onclick="openProject('coca-cola')">
+        <img class="card-img" src="https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000&auto=format&fit=crop" alt="">
+        <div class="card-content">
+          <div>
+            <div class="card-title" id="title-coca-cola"></div>
+          </div>
+          <div class="card-meta"><span>2025</span><span>MOTION DESIGN</span></div>
         </div>
-      </section>
+      </article>
 
-      <!-- About & Contact Section -->
-      <section id="about-section" class="pt-32 pb-24 px-6 md:px-12 max-w-7xl mx-auto border-b border-white/5 relative z-20 bg-[var(--bg-color)]">
-        <h1 class="text-5xl md:text-7xl font-semibold tracking-tight text-white mb-12 uppercase mix-blend-difference">
-          SOBRE MIM
-        </h1>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
-          <!-- Text Block -->
-          <div class="flex flex-col gap-8 text-sm text-gray-400 font-light leading-relaxed max-w-lg">
-            <p>
-              TENHO 25 ANOS, CONTO COM 8 DE CARREIRA PROFISSIONAL EM ÁREAS COMO
-              EDIÇÃO DE VÍDEO, DESIGN GRÁFICO, 3D E VFX. TENHO ESTUDADO UI/UX E
-              CONTO COM PROJETOS NO MEU CURRÍCULO.
-            </p>
-            <p>
-              NESSA TRAJETÓRIA DE ESTUDAR E ENTENDER O QUE É DESIGN, TIVE EM
-              MINHA CARREIRA O HOTEL&amp;RESORTE QUE FOI MEU PRIMEIRO EMPREGO
-              CLT COMO AUX. DE COMUNICAÇÃO EM
-              <span class="text-white font-medium">2021</span>
-              . EM
-              <span class="text-white font-medium">2022</span>
-              ENTREI PARA A EMR QUE FOI UM DOS LUGARES QUE MAIS ME DESENVOLVI
-              TRABALHEI PRÓXIMO A PESSOAS MUITO TALENTOSAS PRÓXIMO AO PORTO
-              DIGITAL, ME DESPEDI EM 2024. COMECEI A TRABALHAR EM AGÊNCIAS COMO
-              D.A DESDE 2024 ME ESPECIALIZANDO COM O TEMPO EM 3D, MOTION
-              GRAPHICS E VFX PARA DIREÇÃO DE PROJETOS AUDIOVISUAIS.
-            </p>
+      <!-- CARD 2: CARNAVAL -->
+      <article class="project-card" data-categories="video-editing" onclick="openProject('carnaval')">
+        <img class="card-img" src="https://images.unsplash.com/photo-1550684376-efcbd6e3f031?q=80&w=1000&auto=format&fit=crop" alt="">
+        <div class="card-content">
+          <div>
+            <div class="card-title" id="title-carnaval"></div>
+            <span class="card-badge" style="color:rgba(100,149,237,0.8);">RECIFE</span>
           </div>
-
-          <!-- Portrait Image -->
-          <div class="w-full aspect-[3/4] bg-[#111] overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" class="w-full h-full object-cover grayscale opacity-80" alt="About Portrait">
-          </div>
+          <div class="card-meta"><span>2024</span><span>EDIÇÃO DE VÍDEO</span></div>
         </div>
-      </section>
+      </article>
 
-      <footer id="contact-section" class="py-24 px-6 md:px-12 max-w-7xl mx-auto relative z-20 bg-[var(--bg-color)]">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-24">
-          <!-- Left Links -->
-          <div class="flex flex-col gap-12">
-            <h2 class="text-2xl md:text-3xl font-medium tracking-tight text-white uppercase">
-              FIQUE PRÓXIMO
-            </h2>
-            <ul class="flex flex-col gap-4 text-base font-light text-gray-400">
-              <li>
-                <a href="https://instagram.com/xntvisuals" target="_blank">
-  Instagram
-</a>
-              </li>
-              <li>
-                <a href="https://wa.me/5581988938184" target="_blank">
-  Whatsapp
-</a>
-              </li>
-              <li>
-                <a href="/cdn-cgi/l/email-protection#fa82948e8c93898f9b9689ba9d979b9396d4999597">
-  Email
-</a>
-              </li>
-            </ul>
-
-            <div class="mt-auto pt-12">
-              <span class="text-xs text-gray-600 block mb-2">
-                Caso prefira use o
-              </span>
-              <a href="https://www.youtube.com/results?search_query=how+to+make+a+smoke+signal" target="_blank" rel="noopener noreferrer" class="text-xs font-mono font-medium tracking-widest text-green-500 hover:text-green-400 transition-colors uppercase block w-max relative group">
-                [SINAL DE FUMAÇA]
-                <span class="absolute -bottom-1 left-0 w-0 h-px bg-green-500 transition-all duration-300 group-hover:w-full"></span>
-              </a>
-            </div>
+      <!-- CARD 3: GUARARAPES -->
+      <article class="project-card" data-categories="video-editing direcao-arte" onclick="openProject('guararapes')">
+        <img class="card-img" src="https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=1000&auto=format&fit=crop" alt="">
+        <div class="card-content">
+          <div>
+            <div class="card-title" id="title-guararapes"></div>
+            <span class="card-badge" style="color:rgba(218,165,32,0.7);">SHOPPING</span>
           </div>
-
-          <!-- Right Input -->
-          <div class="flex flex-col gap-12 justify-start">
-            <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-white uppercase">
-              ME MANDE UM EMAIL
-            </h2>
-            <div class="w-full relative mt-8">
-              <input type="email" placeholder="seuemail@email.com.br" class="custom-input w-full pb-4 text-sm font-light text-white placeholder:text-gray-700 placeholder:font-mono placeholder:text-xs tracking-wide">
-            </div>
-          </div>
+          <div class="card-meta"><span>2025</span><span>EDIÇÃO DE VÍDEO</span></div>
         </div>
-      </footer>
-    </main>
+      </article>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-      lucide.createIcons();
-      document.addEventListener('DOMContentLoaded', () => {
-          const heroImg = document.getElementById('main-hero-img');
-          setTimeout(() => { heroImg.classList.add('revealed'); }, 300);
+      <!-- CARD 4: OROCHI -->
+      <article class="project-card" data-categories="3d" onclick="openProject('orochi')">
+        <img class="card-img" src="https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=1000&auto=format&fit=crop" alt="">
+        <div class="card-content">
+          <div>
+            <div class="card-title" id="title-orochi"></div>
+            <span class="card-badge" style="color:#555;">MAINSTREET</span>
+          </div>
+          <div class="card-meta"><span>2023</span><span>MODELAGEM 3D</span></div>
+        </div>
+      </article>
 
-          // Logo rise with staggered blur-up
-          document.querySelectorAll('.logo-rise').forEach(el => {
-            const delay = parseInt(el.getAttribute('data-delay')) || 1200;
-            setTimeout(() => el.classList.add('revealed'), delay);
-          });
+      <!-- CARD 5: PLACEHOLDER C -->
+      <article class="project-card" data-categories="design-grafico" style="background:#090909;" onclick="openProject('projeto-c')">
+        <div class="card-content" style="justify-content:center; align-items:center;">
+          <div class="card-title" id="title-projeto-c" style="color:#1a1a1a;"></div>
+        </div>
+      </article>
 
-          // Bottom scroll blur with lazy lerp
-          const scrollBlurEl = document.getElementById('scroll-blur-bottom');
-          let sbTarget = 0, sbCurrent = 0, sbRAF = null;
-          window.addEventListener('scroll', () => {
-            sbTarget = Math.min(window.scrollY / 280, 1) * 16;
-            if (!sbRAF) sbRAF = requestAnimationFrame(function tick() {
-              sbCurrent += (sbTarget - sbCurrent) * 0.08;
-              const v = sbCurrent.toFixed(3);
-              scrollBlurEl.style.backdropFilter = `blur(${v}px)`;
-              scrollBlurEl.style.webkitBackdropFilter = `blur(${v}px)`;
-              sbRAF = Math.abs(sbCurrent - sbTarget) > 0.02 ? requestAnimationFrame(tick) : null;
-            });
-          }, { passive: true });
+      <!-- CARD 6: PLACEHOLDER D -->
+      <article class="project-card" data-categories="ui-ux" style="background:#090909;" onclick="openProject('projeto-d')">
+        <div class="card-content" style="justify-content:center; align-items:center;">
+          <div class="card-title" id="title-projeto-d" style="color:#1a1a1a;"></div>
+        </div>
+      </article>
 
-          const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$*{}[]/\\<>~';
-          class TextScramble {
-              constructor(el) {
-                  this.el = el;
-                  this.update = this.update.bind(this);
-              }
-              setText(newText) {
-                  const oldText = this.el.innerText;
-                  const length = Math.max(oldText.length, newText.length);
-                  const promise = new Promise((resolve) => this.resolve = resolve);
-                  this.queue = [];
-                  for (let i = 0; i < length; i++) {
-                      const from = oldText[i] || '';
-                      const to = newText[i] || '';
-                      const start = Math.floor(Math.random() * 60);
-                      const end = start + Math.floor(Math.random() * 60);
-                      this.queue.push({ from, to, start, end });
-                  }
-                  cancelAnimationFrame(this.frameRequest);
-                  this.frame = 0;
-                  this.update();
-                  return promise;
-              }
-              update() {
-                  let output = '';
-                  let complete = 0;
-                  for (let i = 0, n = this.queue.length; i < n; i++) {
-                      let { from, to, start, end, char } = this.queue[i];
-                      if (this.frame >= end) {
-                          complete++;
-                          output += to;
-                      } else if (this.frame >= start) {
-                          if (!char || Math.random() < 0.2) {
-                              char = chars[Math.floor(Math.random() * chars.length)];
-                              this.queue[i].char = char;
-                          }
-                          output += `<span class="opacity-40 font-mono text-[0.9em]">${char}</span>`;
-                      } else {
-                          output += from;
-                      }
-                  }
-                  this.el.innerHTML = output;
-                  if (complete === this.queue.length) {
-                      this.resolve();
-                  } else {
-                      this.frameRequest = requestAnimationFrame(this.update);
-                      this.frame++;
-                  }
-              }
-          }
+    </div>
+    <div id="empty-state" class="empty-state" style="display:none;">NENHUM PROJETO NESSA CATEGORIA</div>
+  </section>
 
-          const heroTextEl = document.querySelector('.encrypt-text');
-          const fx = new TextScramble(heroTextEl);
-          const targetText = heroTextEl.getAttribute('data-text');
-          heroTextEl.innerHTML = '';
-          setTimeout(() => {
-              fx.setText(targetText);
-          }, 1000);
+  <!-- ABOUT -->
+  <section id="about-section" style="padding:120px 64px 96px; max-width:1200px; margin:0 auto; border-bottom:1px solid rgba(255,255,255,0.04);">
+    <h1 style="font-size:clamp(48px,6vw,80px); font-weight:600; letter-spacing:-0.03em; color:#fff; text-transform:uppercase; margin-bottom:48px;">SOBRE MIM</h1>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:80px;">
+      <div style="display:flex; flex-direction:column; gap:24px; font-size:13px; color:#555; font-weight:300; line-height:1.9; max-width:460px; text-transform:uppercase;">
+        <p>Tenho 25 anos, conto com 8 de carreira profissional em áreas como edição de vídeo, design gráfico, 3D e VFX. Tenho estudado UI/UX e conto com projetos no meu currículo.</p>
+        <p>Nessa trajetória, tive no hotel&resort meu primeiro emprego CLT como Aux. de Comunicação em <span style="color:#fff;">2021</span>. Em <span style="color:#fff;">2022</span> entrei para a EMR próximo ao Porto Digital, me despedi em 2024. Comecei a trabalhar em agências como D.A desde 2024 me especializando em 3D, Motion Graphics e VFX.</p>
+      </div>
+      <div style="aspect-ratio:3/4; background:#111; overflow:hidden;">
+        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" style="width:100%; height:100%; object-fit:cover; filter:grayscale(1); opacity:0.75;" alt="Portrait">
+      </div>
+    </div>
+  </section>
 
-          const barcodes = document.querySelectorAll('.nav-barcode');
-          barcodes.forEach(bc => {
-              const bcFx = new TextScramble(bc);
-              const targetText = bc.getAttribute('data-text');
-              const defaultText = '||||||||';
+  <!-- CONTACT -->
+  <footer id="contact-section" style="padding:96px 64px; max-width:1200px; margin:0 auto;">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:80px;">
+      <div style="display:flex; flex-direction:column; gap:40px;">
+        <h2 style="font-size:clamp(24px,3vw,32px); font-weight:500; color:#fff; text-transform:uppercase;">FIQUE PRÓXIMO</h2>
+        <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:16px; font-size:14px; color:#555;">
+          <li><a href="https://instagram.com/xntvisuals" target="_blank" style="color:#555; text-decoration:none; transition:color 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#555'">Instagram</a></li>
+          <li><a href="https://wa.me/5581988938184" target="_blank" style="color:#555; text-decoration:none; transition:color 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#555'">Whatsapp</a></li>
+          <li><a href="mailto:contato@xnt.com" style="color:#555; text-decoration:none; transition:color 0.3s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#555'">Email</a></li>
+        </ul>
+        <div>
+          <span style="font-size:11px; color:#2a2a2a; display:block; margin-bottom:8px;">Caso prefira use o</span>
+          <a href="https://www.youtube.com/results?search_query=how+to+make+a+smoke+signal" target="_blank" style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.2em; color:#22c55e; text-decoration:none; text-transform:uppercase;">[SINAL DE FUMAÇA]</a>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:40px;">
+        <h2 style="font-size:clamp(28px,3.5vw,40px); font-weight:600; color:#fff; text-transform:uppercase;">ME MANDE UM EMAIL</h2>
+        <div style="margin-top:20px;">
+          <input type="email" class="custom-input" placeholder="seuemail@email.com.br">
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:80px; padding-top:32px; border-top:1px solid #0a0a0a; display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.25em; color:#222;">XNT © 2025</span>
+      <span style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.25em; color:#222;">PERNAMBUCO — [-34.926 -8.151]</span>
+    </div>
+  </footer>
+</div>
 
-              bc.addEventListener('mouseenter', () => bcFx.setText(targetText));
-              bc.addEventListener('mouseleave', () => bcFx.setText(defaultText));
-          });
+<!-- ============================
+     PROJECT DETAIL PAGE
+     ============================ -->
+<div id="project-page" class="page">
+  <header>
+    <div style="display:flex; gap:32px;">
+      <span class="nav-link" onclick="goBack()">||||||||</span>
+    </div>
+    <span class="nav-logo" onclick="goBack()">XNT</span>
+    <div style="display:flex; gap:32px;">
+      <span class="nav-link" onclick="goBack()">||||||||</span>
+    </div>
+  </header>
 
-          const heroSection = document.getElementById('hero-section');
-          const crossContainer = document.getElementById('crosshair-container');
-          const lineV = document.getElementById('line-v');
-          const lineH = document.getElementById('line-h');
+  <div id="project-content"></div>
+</div>
 
-          let targetX = window.innerWidth / 2;
-          let targetY = window.innerHeight / 2;
-          let currentX = targetX;
-          let currentY = targetY;
-          let isHoveringHero = false;
+<!-- PROJECT DATA & TEMPLATES -->
+<script>
+const PROJECTS = {
+  'coca-cola': {
+    title: 'COCA-COLA',
+    year: '2025',
+    category: 'MOTION DESIGN',
+    tags: ['Motion Design', 'After Effects', 'Cinema 4D'],
+    client: 'Coca-Cola Brasil',
+    clientRole: 'Parceria / Agência intermediária',
+    heroImg: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1600&auto=format&fit=crop',
+    intro: `Projeto de motion design desenvolvido para uma campanha digital da <span class="highlight">Coca-Cola Brasil</span>, com foco em redes sociais e ativações de marca. O objetivo era criar uma peça que traduzisse a energia icônica da marca para um formato moderno e impactante.`,
+    body: `Cada quadro foi cuidadosamente construído frame a frame, combinando elementos da identidade visual histórica da marca com tratamentos contemporâneos. A direção de arte privilegiou contraste e fluidez, respeitando o sistema de cores vermelho e branco enquanto explorava movimentos orgânicos.`,
+    quote: 'A direção criativa exigiu um equilíbrio delicado entre <span>inovação visual</span> e o respeito ao legado iconográfico de uma das marcas mais reconhecidas do mundo.',
+    details: [
+      { label: 'ANO', value: '2025' },
+      { label: 'FERRAMENTAS', value: 'After Effects, Cinema 4D, Illustrator' },
+      { label: 'DURAÇÃO', value: '15s / 30s' },
+      { label: 'FORMATO', value: 'Feed, Stories, Reels' },
+      { label: 'ENTREGA', value: '4K / H.264' },
+      { label: 'CLIENTE', value: 'Coca-Cola Brasil' },
+    ],
+    images: [
+      'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1200',
+      'https://images.unsplash.com/photo-1534353436294-0dbd4bdac845?q=80&w=1200',
+      'https://images.unsplash.com/photo-1567529684892-09290a1b2d05?q=80&w=1200',
+    ],
+    video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  },
+  'carnaval': {
+    title: 'CARNAVAL',
+    year: '2024',
+    category: 'EDIÇÃO DE VÍDEO',
+    tags: ['Edição de Vídeo', 'Color Grading', 'Recife'],
+    client: 'Prefeitura do Recife',
+    clientRole: 'Cliente direto / Comunicação institucional',
+    heroImg: 'https://images.unsplash.com/photo-1550684376-efcbd6e3f031?q=80&w=1600&auto=format&fit=crop',
+    intro: `Cobertura audiovisual do Carnaval do Recife <span class="highlight">2024</span>, um dos maiores do Brasil. O projeto envolveu captação e edição de conteúdo para múltiplas plataformas, capturando a essência cultural e a energia única do frevo e do maracatu.`,
+    body: `O desafio foi condensar dias de festa em narrativas coesas de 60, 90 e 180 segundos. A edição priorizou ritmo sincopado que dialoga com as batidas do frevo, enquanto o color grade apostou em um look vibrante e quente que evoca o calor de Pernambuco.`,
+    quote: 'Cobrir o Carnaval do Recife é como tentar capturar o sol — você sente a luz por todos os lados ao mesmo tempo. A edição precisava <span>respirar esse caos com ordem.</span>',
+    details: [
+      { label: 'ANO', value: '2024' },
+      { label: 'FERRAMENTAS', value: 'Premiere Pro, DaVinci Resolve' },
+      { label: 'DURAÇÃO', value: '60s / 90s / 3min' },
+      { label: 'FORMATO', value: 'YouTube, TV, Social' },
+      { label: 'CAPTAÇÃO', value: '4K / Sony FX3' },
+      { label: 'CIDADE', value: 'Recife, PE' },
+    ],
+    images: [
+      'https://images.unsplash.com/photo-1550684376-efcbd6e3f031?q=80&w=1200',
+      'https://images.unsplash.com/photo-1570824104453-508955ab713e?q=80&w=1200',
+      'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=1200',
+    ],
+    video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  },
+  'guararapes': {
+    title: 'GUARARAPES',
+    year: '2025',
+    category: 'EDIÇÃO DE VÍDEO',
+    tags: ['Edição de Vídeo', 'Direção de Arte', 'Varejo'],
+    client: 'Shopping Guararapes',
+    clientRole: 'Agência ANDC — Cliente final: Shopping Guararapes',
+    heroImg: 'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=1600&auto=format&fit=crop',
+    intro: `Campanha audiovisual desenvolvida para o <span class="highlight">Shopping Guararapes</span>, maior shopping de Pernambuco. O projeto foi uma parceria com a agência ANDC, onde atuei como diretor de arte e editor responsável pela entrega final.`,
+    body: `A proposta criativa focou em humanizar o espaço do shopping, mostrando não apenas produtos mas experiências e conexões humanas. A direção de arte definiu uma paleta quente e acolhedora, contrastando com o ambiente urbano externo.`,
+    quote: 'Mais do que mostrar um shopping, o desafio era <span>mostrar o sentimento de pertencimento</span> que um espaço como esse cria na vida das pessoas.',
+    details: [
+      { label: 'ANO', value: '2025' },
+      { label: 'FERRAMENTAS', value: 'Premiere, After Effects' },
+      { label: 'AGÊNCIA', value: 'ANDC' },
+      { label: 'FORMATO', value: 'TV, Digital, OOH' },
+      { label: 'FUNÇÃO', value: 'Dir. Arte + Edição' },
+      { label: 'CLIENTE', value: 'Shopping Guararapes' },
+    ],
+    images: [
+      'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?q=80&w=1200',
+      'https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?q=80&w=1200',
+      'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=1200',
+    ],
+    video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  },
+  'orochi': {
+    title: 'OROCHI',
+    year: '2023',
+    category: 'MODELAGEM 3D',
+    tags: ['3D', 'Cinema 4D', 'Octane Render', 'VFX'],
+    client: 'Orochi / Mainstreet',
+    clientRole: 'Colaboração criativa — coleção de streetwear',
+    heroImg: 'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=1600&auto=format&fit=crop',
+    intro: `Projeto de modelagem e visualização 3D para a <span class="highlight">coleção Mainstreet</span> da marca Orochi. O trabalho envolveu a criação de assets visuais tridimensionais para apresentação de produtos e conteúdo de campanha.`,
+    body: `Cada modelo foi construído com atenção às proporções reais das peças, garantindo fidelidade ao produto físico. Os renders exploram iluminação dramática e texturas realistas, criando uma estética dark que conversa com o universo da marca.`,
+    quote: 'Trabalhar com uma marca de streetwear significava habitar <span>um espaço entre a rua e o digital</span> — onde o 3D precisava ter textura e peso de mundo real.',
+    details: [
+      { label: 'ANO', value: '2023' },
+      { label: 'FERRAMENTAS', value: 'Cinema 4D, Octane, Substance' },
+      { label: 'TIPO', value: 'Product Visualization' },
+      { label: 'ENTREGA', value: 'Stills + Animation' },
+      { label: 'RESOLUÇÃO', value: '4K / 8K stills' },
+      { label: 'MARCA', value: 'Orochi x Mainstreet' },
+    ],
+    images: [
+      'https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?q=80&w=1200',
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?q=80&w=1200',
+      'https://images.unsplash.com/photo-1562157873-818bc0726f68?q=80&w=1200',
+    ],
+    video: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  },
+  'projeto-c': {
+    title: 'PROJETO C',
+    year: '—',
+    category: 'DESIGN GRÁFICO',
+    tags: ['Design Gráfico', 'Em breve'],
+    client: 'Em andamento',
+    clientRole: 'NDA — Em desenvolvimento',
+    heroImg: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1600&auto=format&fit=crop',
+    intro: `Projeto confidencial atualmente em desenvolvimento. Detalhes serão revelados em breve. O trabalho envolve <span class="highlight">design gráfico e identidade visual</span> para uma marca em fase de lançamento.`,
+    body: `Este projeto está sob acordo de confidencialidade (NDA) e os detalhes completos serão divulgados após o lançamento oficial da marca. O processo criativo vem sendo documentado e será apresentado neste espaço em breve.`,
+    quote: 'Às vezes o melhor projeto é <span>aquele que ainda não pode ser mostrado.</span>',
+    details: [
+      { label: 'STATUS', value: 'Em andamento' },
+      { label: 'PREVISÃO', value: '2025' },
+      { label: 'ÁREA', value: 'Design Gráfico' },
+      { label: 'NDA', value: 'Sim' },
+      { label: 'TIPO', value: 'Identidade Visual' },
+      { label: 'CLIENTE', value: 'Confidencial' },
+    ],
+    images: [
+      'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200',
+      'https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=1200',
+      'https://images.unsplash.com/photo-1618556450994-a6a128ef0d9d?q=80&w=1200',
+    ],
+    video: null,
+  },
+  'projeto-d': {
+    title: 'PROJETO D',
+    year: '—',
+    category: 'UI/UX',
+    tags: ['UI/UX', 'Figma', 'Em breve'],
+    client: 'Em andamento',
+    clientRole: 'NDA — Em desenvolvimento',
+    heroImg: 'https://images.unsplash.com/photo-1557682250-33bd709cbe85?q=80&w=1600&auto=format&fit=crop',
+    intro: `Interface e experiência de usuário em desenvolvimento para uma plataforma digital. O projeto explora <span class="highlight">sistemas de design</span> e arquitetura de informação aplicados a um produto real.`,
+    body: `O processo de design parte da pesquisa com usuários reais, passando por wireframes e chegando a protótipos de alta fidelidade. A abordagem prioriza acessibilidade e clareza sem sacrificar personalidade visual.`,
+    quote: 'UI/UX bem feito é <span>invisível para o usuário</span> — ele simplesmente chega onde quer chegar sem perceber o quanto foi pensado.',
+    details: [
+      { label: 'STATUS', value: 'Em andamento' },
+      { label: 'PREVISÃO', value: '2025' },
+      { label: 'ÁREA', value: 'UI/UX Design' },
+      { label: 'FERRAMENTA', value: 'Figma' },
+      { label: 'TIPO', value: 'Digital Product' },
+      { label: 'CLIENTE', value: 'Confidencial' },
+    ],
+    images: [
+      'https://images.unsplash.com/photo-1557682250-33bd709cbe85?q=80&w=1200',
+      'https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=1200',
+      'https://images.unsplash.com/photo-1545235617-9465d2a55698?q=80&w=1200',
+    ],
+    video: null,
+  },
+};
 
-          document.addEventListener('mousemove', (e) => {
-              targetX = e.clientX;
-              targetY = e.clientY;
-          });
+// ===== NAVIGATION =====
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
 
-          heroSection.addEventListener('mouseenter', () => {
-              isHoveringHero = true;
-              crossContainer.style.opacity = '1';
-          });
-          heroSection.addEventListener('mouseleave', () => {
-              isHoveringHero = false;
-              crossContainer.style.opacity = '0';
-          });
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
 
-          function renderCrosshair() {
-              if (isHoveringHero) {
-                  currentX += (targetX - currentX) * 0.15;
-                  currentY += (targetY - currentY) * 0.15;
-                  lineV.style.transform = `translateX(${currentX}px)`;
-                  lineH.style.transform = `translateY(${currentY}px)`;
-              }
-              requestAnimationFrame(renderCrosshair);
-          }
-          renderCrosshair();
+function goBack() {
+  showPage('main-page');
+}
 
-          const filterBtn = document.getElementById('filter-btn');
-          const filterContainer = document.getElementById('filter-container');
-          const filterIcon = document.getElementById('filter-icon');
-          let isFilterOpen = false;
+// ===== OPEN PROJECT =====
+function openProject(slug) {
+  const p = PROJECTS[slug];
+  if (!p) return;
 
-          filterBtn.addEventListener('click', () => {
-              isFilterOpen = !isFilterOpen;
-              if (isFilterOpen) {
-                  filterContainer.style.height = filterContainer.scrollHeight + 'px';
-                  filterContainer.style.opacity = '1';
-                  filterIcon.style.transform = 'rotate(180deg)';
-              } else {
-                  filterContainer.style.height = '0';
-                  filterContainer.style.opacity = '0';
-                  filterIcon.style.transform = 'rotate(0deg)';
-              }
-          });
+  const videoBlock = p.video
+    ? `<div class="proj-media-full" style="margin-bottom:2px;"><iframe src="${p.video}" allowfullscreen></iframe></div>`
+    : `<div style="aspect-ratio:16/9; background:#0a0a0a; display:flex; align-items:center; justify-content:center; margin-bottom:2px; border:1px solid #111;">
+        <span style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.3em; color:#222;">VÍDEO EM BREVE</span>
+       </div>`;
 
-          document.querySelectorAll('.animated-title').forEach(el => {
-              const text = el.getAttribute('data-text');
-              let html = '';
-              text.split('').forEach((char, i) => {
-                  if (char === ' ') {
-                      html += `<span class="inline-block w-3 md:w-4"></span>`;
-                  } else {
-                      html += `<span class="title-letter inline-block" style="animation-delay: ${i * 0.05}s">${char}</span>`;
-                  }
-              });
-              el.innerHTML = html;
-          });
+  const detailsHtml = p.details.map(d => `
+    <div class="proj-detail-item">
+      <div class="proj-detail-label">${d.label}</div>
+      <div class="proj-detail-value">${d.value}</div>
+    </div>`).join('');
 
-          const projectCards = document.querySelectorAll('.project-card');
-          projectCards.forEach(card => {
-              const img = card.querySelector('.parallax-image');
-              if (!img) return;
+  document.getElementById('project-content').innerHTML = `
+    <div class="proj-hero" style="margin-top:0;">
+      <img class="proj-hero-img" src="${p.heroImg}" alt="${p.title}">
+      <div class="proj-hero-overlay"></div>
+      <div class="proj-hero-content">
+        <div class="proj-hero-eyebrow">${p.category} — ${p.year}</div>
+        <div class="proj-hero-title">${p.title}</div>
+        <div class="proj-hero-tags">
+          ${p.tags.map(t => `<span class="proj-tag">${t}</span>`).join('')}
+        </div>
+      </div>
+    </div>
 
-              card.addEventListener('mousemove', (e) => {
-                  const rect = card.getBoundingClientRect();
-                  const x = (e.clientX - rect.left) / rect.width - 0.5;
-                  const y = (e.clientY - rect.top) / rect.height - 0.5;
-                  img.style.transform = `translate(${-x * 30}px, ${-y * 30}px) scale(1.05)`;
-              });
+    <div class="proj-body">
 
-              card.addEventListener('mouseleave', () => {
-                  img.style.transform = `translate(0px, 0px) scale(1)`;
-              });
-          });
+      <button class="back-btn" onclick="goBack()">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        VOLTAR AOS PROJETOS
+      </button>
 
-      });
-    </script>
+      <div class="proj-section-title">SOBRE O PROJETO</div>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const edges = document.querySelectorAll('.header-edge');
-        const turbulence = document.querySelector('#edge-fx feTurbulence');
-        const displacement = document.querySelector('#edge-fx feDisplacementMap');
-        let time = 0;
-        function animateHeaderEdges() {
-          const scrolled = window.scrollY;
-          const factor = Math.min(scrolled / 500, 1);
-          time += 0.01;
-          const breath = Math.sin(time) * 2;
-          const width = 30 + (factor * 15) + breath;
-          const opacity = 0.85 + (factor * 0.15) + (Math.sin(time * 0.5) * 0.05);
-          edges.forEach(edge => {
-            edge.style.width = `${width}%`;
-            edge.style.opacity = opacity;
-          });
-          if (turbulence) {
-            turbulence.setAttribute('baseFrequency', `${0.002 + (Math.sin(time * 0.5) * 0.0005)}`);
-          }
-          if (displacement) {
-            displacement.setAttribute('scale', `${25 + factor * 10 + Math.sin(time) * 5
-    <!-- Animated Film Grain Canvas -->
-    <script>
-    (function() {
-      const canvas = document.getElementById('film-grain-canvas');
-      const ctx = canvas.getContext('2d');
+      <div class="proj-intro">
+        <div class="proj-intro-text">
+          <p>${p.intro}</p>
+          <p>${p.body}</p>
+        </div>
+        <div class="proj-client-card">
+          <div class="proj-client-label">Em parceria com</div>
+          <div class="proj-client-name">${p.client}</div>
+          <div class="proj-client-role">${p.clientRole}</div>
+        </div>
+      </div>
 
-      // Render at a lower resolution and scale up — looks more like real film grain
-      const SCALE = 2.5;
-      let W, H;
+      <div class="proj-quote">${p.quote}</div>
 
-      function resize() {
-        W = Math.ceil(window.innerWidth / SCALE);
-        H = Math.ceil(window.innerHeight / SCALE);
-        canvas.width = W;
-        canvas.height = H;
-        canvas.style.width = '100vw';
-        canvas.style.height = '100vh';
+      <div class="proj-divider"></div>
+
+      <div class="proj-section-title">VISUAIS</div>
+
+      <div class="proj-media-full" style="margin-bottom:2px;">
+        <img src="${p.images[0]}" alt="Visual principal do projeto">
+      </div>
+
+      <div class="proj-media-grid" style="margin-bottom:2px;">
+        <div class="proj-media-grid-item"><img src="${p.images[1]}" alt="Detalhe 1"></div>
+        <div class="proj-media-grid-item"><img src="${p.images[2]}" alt="Detalhe 2"></div>
+      </div>
+
+      ${videoBlock}
+
+      <div class="proj-divider"></div>
+
+      <div class="proj-section-title">DETALHES TÉCNICOS</div>
+      <div class="proj-details-grid">${detailsHtml}</div>
+
+      <div style="display:flex; justify-content:center; margin-top:80px;">
+        <button onclick="goBack()" style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.25em; color:#444; background:none; border:1px solid #1a1a1a; padding:14px 36px; cursor:pointer; transition:all 0.3s ease; text-transform:uppercase;"
+          onmouseover="this.style.color='#fff'; this.style.borderColor='#333';"
+          onmouseout="this.style.color='#444'; this.style.borderColor='#1a1a1a';">
+          ← OUTROS PROJETOS
+        </button>
+      </div>
+
+    </div>
+  `;
+
+  showPage('project-page');
+}
+
+// ===== FILTER =====
+let filterOpen = false;
+
+function toggleFilter() {
+  filterOpen = !filterOpen;
+  const btn = document.getElementById('filter-btn');
+  const container = document.getElementById('filter-container');
+  btn.classList.toggle('open', filterOpen);
+  container.classList.toggle('open', filterOpen);
+}
+
+function setFilter(category, el) {
+  document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+
+  const cards = document.querySelectorAll('.project-card');
+  let visibleCount = 0;
+
+  cards.forEach(card => {
+    const cats = card.getAttribute('data-categories') || '';
+    const show = category === 'all' || cats.includes(category);
+    card.setAttribute('data-hidden', show ? 'false' : 'true');
+    if (show) visibleCount++;
+  });
+
+  const empty = document.getElementById('empty-state');
+  const grid = document.getElementById('projects-grid');
+
+  if (visibleCount === 0) {
+    grid.style.display = 'none';
+    empty.style.display = 'block';
+  } else {
+    grid.style.display = 'grid';
+    empty.style.display = 'none';
+  }
+}
+
+// ===== ANIMATED TITLES =====
+function buildAnimatedTitle(el, text) {
+  if (!el) return;
+  el.innerHTML = text.split('').map((c, i) =>
+    c === ' '
+      ? `<span style="display:inline-block; width:16px;"></span>`
+      : `<span class="animated-letter" style="animation-delay:${i * 0.05}s">${c}</span>`
+  ).join('');
+  el.style.overflow = 'hidden';
+  el.style.display = 'flex';
+}
+
+// ===== TEXT SCRAMBLE =====
+const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$*{}[]/<>';
+class Scramble {
+  constructor(el) {
+    this.el = el;
+    this.frame = 0;
+    this.queue = [];
+    this.raf = null;
+  }
+  set(text) {
+    const old = this.el.innerText;
+    const len = Math.max(old.length, text.length);
+    this.queue = [];
+    for (let i = 0; i < len; i++) {
+      const f = old[i] || '';
+      const t = text[i] || '';
+      const start = Math.floor(Math.random() * 50);
+      const end = start + Math.floor(Math.random() * 50);
+      this.queue.push({ f, t, start, end, ch: '' });
+    }
+    cancelAnimationFrame(this.raf);
+    this.frame = 0;
+    this.tick();
+  }
+  tick() {
+    let out = ''; let done = 0;
+    for (const item of this.queue) {
+      const { f, t, start, end } = item;
+      if (this.frame >= end) { done++; out += t; }
+      else if (this.frame >= start) {
+        if (!item.ch || Math.random() < 0.2) item.ch = CHARS[Math.floor(Math.random() * CHARS.length)];
+        out += `<span style="opacity:0.35;font-family:'JetBrains Mono',monospace;">${item.ch}</span>`;
+      } else out += f;
+    }
+    this.el.innerHTML = out;
+    if (done < this.queue.length) {
+      this.raf = requestAnimationFrame(() => { this.frame++; this.tick(); });
+    }
+  }
+}
+
+
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  // Hero reveal
+  setTimeout(() => {
+    const img = document.getElementById('main-hero-img');
+    if (img) { img.classList.add('revealed'); img.style.filter = 'grayscale(1)'; }
+  }, 300);
+
+  // Logo rise
+  document.querySelectorAll('.logo-rise').forEach(el => {
+    const delay = parseInt(el.getAttribute('data-delay')) || 1200;
+    setTimeout(() => el.classList.add('up'), delay);
+  });
+
+  // Animated titles on main page
+  const titles = [
+    ['title-coca-cola', 'COCA-COLA'],
+    ['title-carnaval', 'CARNAVAL'],
+    ['title-guararapes', 'GUARARAPES'],
+    ['title-orochi', 'OROCHI'],
+    ['title-projeto-c', 'PROJETO C'],
+    ['title-projeto-d', 'PROJETO D'],
+  ];
+  titles.forEach(([id, text]) => buildAnimatedTitle(document.getElementById(id), text));
+
+  // Text scramble for hero paragraph
+  const heroP = document.querySelector('.encrypt-text');
+  if (heroP) {
+    const fx = new Scramble(heroP);
+    heroP.innerHTML = '';
+    setTimeout(() => fx.set(heroP.getAttribute('data-text')), 900);
+  }
+
+  // Crosshair — ponto exato de cruzamento, coords Monte Guararapes
+  const heroSec = document.getElementById('hero-section');
+  const crosshair = document.getElementById('crosshair');
+  const cv = document.getElementById('cv');
+  const ch = document.getElementById('ch');
+  const cdot = document.getElementById('cdot');
+  const clabelLat = document.getElementById('clabel-lat');
+  const clabelLon = document.getElementById('clabel-lon');
+  let mx = innerWidth/2, my = innerHeight/2, cx = mx, cy = my, hov = false;
+
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+  if (heroSec) {
+    heroSec.addEventListener('mouseenter', () => { hov = true; crosshair.style.opacity = '1'; });
+    heroSec.addEventListener('mouseleave', () => { hov = false; crosshair.style.opacity = '0'; });
+  }
+
+  (function crosshairLoop() {
+    if (hov) {
+      cx += (mx - cx) * 0.12;
+      cy += (my - cy) * 0.12;
+      const x = Math.round(cx * 10) / 10;
+      const y = Math.round(cy * 10) / 10;
+      cv.style.transform = `translateX(${x}px)`;
+      ch.style.transform = `translateY(${y}px)`;
+      // dot exactly at intersection — offset by half its size (2px)
+      cdot.style.left = (x - 2) + 'px';
+      cdot.style.top  = (y - 2) + 'px';
+      // LAT label: just above h-line, 10px right of v-line
+      clabelLat.style.left = (x + 10) + 'px';
+      clabelLat.style.top  = (y - 20) + 'px';
+      // LON label: just below h-line, 10px right of v-line
+      clabelLon.style.left = (x + 10) + 'px';
+      clabelLon.style.top  = (y + 6) + 'px';
+    }
+    requestAnimationFrame(crosshairLoop);
+  })();
+
+  // Pulsing dot grid in hero background
+  const dotsContainer = document.getElementById('hero-dots');
+  if (dotsContainer) {
+    const cols = 22, rows = 14;
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const dot = document.createElement('div');
+        dot.className = 'hero-dot';
+        dot.style.left = ((c / (cols - 1)) * 100) + '%';
+        dot.style.top  = ((r / (rows - 1)) * 100) + '%';
+        // staggered delay based on diagonal distance from center
+        const dx = c - cols / 2, dy = r - rows / 2;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        const duration = 3.5 + Math.random() * 3;
+        const delay = (dist * 0.18 + Math.random() * 1.5).toFixed(2);
+        dot.style.animationDuration = duration + 's';
+        dot.style.animationDelay = '-' + delay + 's';
+        dotsContainer.appendChild(dot);
       }
+    }
+  }
 
-      window.addEventListener('resize', resize);
-      resize();
-
-      // Precompute 4 independent noise tiles for temporal variation
-      const TILES = 4;
-      const TILE_W = 384;
-      const TILE_H = 384;
-      const tiles = [];
-      for (let t = 0; t < TILES; t++) {
-        const td = new Uint8ClampedArray(TILE_W * TILE_H * 4);
-        for (let i = 0; i < TILE_W * TILE_H; i++) {
-          // Gaussian-ish distribution: average of 3 randoms
-          const g = ((Math.random() + Math.random() + Math.random()) / 3 * 255) | 0;
-          // Bias toward mid-gray (cinematic silver halide feel)
-          const v = (g * 0.6 + 50) | 0;
-          td[i*4]   = v;
-          td[i*4+1] = v;
-          td[i*4+2] = v;
-          td[i*4+3] = 255;
-        }
-        tiles.push(new ImageData(td, TILE_W, TILE_H));
-      }
-
-      // Offscreen canvas to hold the tile
-      const offscreen = document.createElement('canvas');
-      offscreen.width = TILE_W;
-      offscreen.height = TILE_H;
-      const offCtx = offscreen.getContext('2d');
-
-      let frameCount = 0;
-
-      function renderGrain() {
-        frameCount++;
-        // Cycle through tiles + random offset each frame
-        const tileIdx = frameCount % TILES;
-        offCtx.putImageData(tiles[tileIdx], 0, 0);
-
-        const ox = (Math.random() * (TILE_W - W)) | 0;
-        const oy = (Math.random() * (TILE_H - H)) | 0;
-
-        ctx.clearRect(0, 0, W, H);
-        ctx.drawImage(offscreen, ox, oy, W, H, 0, 0, W, H);
-
-        requestAnimationFrame(renderGrain);
-      }
-
-      renderGrain();
-    })();
-    </script>
+  // Parallax on project cards
+  document.querySelectorAll('.project-card').forEach(card => {
+    const img = card.querySelector('.card-img');
+    if (!img) return;
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      img.style.transform = `translate(${-x*28}px, ${-y*28}px) scale(1.05)`;
+    });
+    card.addEventListener('mouseleave', () => { img.style.transform = 'translate(0,0) scale(1)'; });
+  });
+});
+</script>
+</body>
+</html>
