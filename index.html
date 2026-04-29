@@ -123,9 +123,48 @@
     .barcode-face-front{ color:#2a2a2a; }
     .barcode-face-back{ color:#fff; transform:rotateX(-90deg); opacity:0.85; }
 
+    /* ===== HERO VIDEO BACKGROUND =====
+       Vídeo de fundo do hero — atrás do grid de pontos e das interações,
+       opacity 0.35 + esmaecimento via overlay gradient.
+       position: absolute (preso ao hero) com inset: 0 e object-fit: cover
+       para cobrir a área inteira sem distorcer a proporção em nenhum tamanho. */
+    .hero-video-wrap {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .hero-video-bg {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 0.35;
+      filter: grayscale(0.35) contrast(0.95) brightness(0.85);
+      will-change: opacity;
+      pointer-events: none;
+      display: block;
+    }
+    /* esmaecimento suave nas bordas (top/bottom) sem prejudicar leitura */
+    .hero-video-fade {
+      position: absolute; inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(to bottom,
+          rgba(3,3,3,0.55) 0%,
+          rgba(3,3,3,0.10) 22%,
+          rgba(3,3,3,0.10) 78%,
+          rgba(3,3,3,0.85) 100%),
+        radial-gradient(ellipse at center,
+          transparent 35%,
+          rgba(3,3,3,0.55) 100%);
+    }
+
     /* ===== HERO DOTS ===== */
     #hero-dots {
       position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+      z-index: 1; /* acima do vídeo, abaixo do conteúdo (z:2) */
     }
     @keyframes dot-pulse {
       0%, 100% { opacity: 0.06; transform: scale(1); }
@@ -361,6 +400,7 @@
     /* ===== EMPTY STATE ===== */
     .empty-state { grid-column: 1 / -1; padding: 80px; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.2em; color: #222; }
 
+
     @media (max-width: 768px) {
       header { padding: 14px 20px; gap: 24px; }
       .proj-hero-content { padding: 32px 24px; }
@@ -522,6 +562,21 @@
 
   <!-- HERO -->
   <section id="hero-section" style="min-height:100vh; padding: 128px 48px 96px; display:flex; align-items:center; justify-content:center; border-bottom:1px solid rgba(255,255,255,0.05); position:relative; overflow:hidden; cursor:none;">
+
+    <!-- background video — silencioso, em loop, abaixo do grid de pontos -->
+    <div class="hero-video-wrap" aria-hidden="true">
+      <video class="hero-video-bg"
+             autoplay loop muted playsinline preload="auto"
+             disablepictureinpicture
+             x-webkit-airplay="deny"
+             poster=""
+             onerror="this.parentElement.style.display='none'">
+        <!-- Caminho relativo: o vídeo está na pasta pai (PORTFOLIO/) -->
+        <source src="../Happy%202k25.%20%F0%9F%A4%9E%F0%9F%8F%BE%E2%9C%A8%EF%B8%8F.mp4" type="video/mp4">
+        <source src="../Happy 2k25. 🤞🏾✨️.mp4" type="video/mp4">
+      </video>
+      <div class="hero-video-fade"></div>
+    </div>
 
     <!-- pulsing dots background -->
     <div id="hero-dots"></div>
@@ -909,6 +964,32 @@ class Scramble {
   }
 }
 
+// ===== HOVER PARALLAX HELPER =====
+function attachCardHover(cards) {
+  cards.forEach(card => {
+    if (card._hoverAttached) return;
+    card._hoverAttached = true;
+    const imgMain = card.querySelector('.card-img-main');
+    const imgBlur = card.querySelector('.card-img-blur');
+    if (!imgMain || !imgBlur) return;
+
+    const reset = () => {
+      imgMain.style.transform = 'translate(0,0) scale(1)';
+      imgBlur.style.transform = 'translate(0,0) scale(1.1)';
+    };
+
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      imgMain.style.transform = `translate(${-x*22}px, ${-y*22}px) scale(1.05)`;
+      imgBlur.style.transform = `translate(${-x*12}px, ${-y*12}px) scale(1.12)`;
+    });
+    card.addEventListener('mouseenter', reset);
+    card.addEventListener('mouseleave', reset);
+  });
+}
+
 // ===== RENDER PROJECT LIST =====
 function renderProjects() {
   const grid = document.getElementById('projects-grid');
@@ -933,28 +1014,9 @@ function renderProjects() {
   `).join('');
 
   PROJECTS.forEach(p => buildAnimatedTitle(document.getElementById(`title-${p.slug}`), p.title));
-
-  document.querySelectorAll('.project-card').forEach(card => {
-    const imgMain = card.querySelector('.card-img-main');
-    const imgBlur = card.querySelector('.card-img-blur');
-    if (!imgMain || !imgBlur) return;
-
-    const reset = () => {
-      imgMain.style.transform = 'translate(0,0) scale(1)';
-      imgBlur.style.transform = 'translate(0,0) scale(1.1)';
-    };
-
-    card.addEventListener('mousemove', e => {
-      const r = card.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width - 0.5;
-      const y = (e.clientY - r.top) / r.height - 0.5;
-      imgMain.style.transform = `translate(${-x*22}px, ${-y*22}px) scale(1.05)`;
-      imgBlur.style.transform = `translate(${-x*12}px, ${-y*12}px) scale(1.12)`;
-    });
-    card.addEventListener('mouseenter', reset);
-    card.addEventListener('mouseleave', reset);
-  });
+  attachCardHover(grid.querySelectorAll('.project-card'));
 }
+
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
