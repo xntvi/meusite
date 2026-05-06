@@ -1,0 +1,21 @@
+# OS / editor junk
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+*.swp
+*.swo
+*.tmp
+.idea/
+.vscode/
+
+# Local tooling (Claude memory, etc.)
+.claude/
+
+# Source files not used by the published site
+head bar.html
+Frame 30.png
+
+# Raw source videos not referenced by the site (saves ~16MB)
+A @wise.medicina*.mp4
+BTS da campanha*.mp4
