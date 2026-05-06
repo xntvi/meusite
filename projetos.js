@@ -15,6 +15,7 @@ const PROJECTS = [
   // ──────────────────────────────────────────────────────────
   {
     slug: 'coca-cola-carnaval-2025',
+    color: '#e61d2b',
     title: 'COCA-COLA CARNAVAL',
     subtitle: 'Ativação Mix Matheus • Carnaval 2025',
     year: '2025',
@@ -53,6 +54,7 @@ const PROJECTS = [
   // ──────────────────────────────────────────────────────────
   {
     slug: 'stu-2023',
+    color: '#22c55e',
     title: 'STU 2023',
     subtitle: 'Skate Total Urbe • Esportes da Sorte',
     year: '2023',
@@ -111,6 +113,7 @@ const PROJECTS = [
   // ──────────────────────────────────────────────────────────
   {
     slug: 'kalera',
+    color: '#ec4899',
     title: 'KALERA',
     subtitle: 'Thumbnails & Identidade Visual • FURIA',
     year: '2022',
@@ -177,6 +180,7 @@ const PROJECTS = [
   // ──────────────────────────────────────────────────────────
   {
     slug: 'gameplan',
+    color: '#06b6d4',
     title: 'GAMEPLAN',
     subtitle: 'Trailer institucional • Gametech',
     year: '2022',
@@ -210,6 +214,7 @@ const PROJECTS = [
   // ──────────────────────────────────────────────────────────
   {
     slug: 'flying-high',
+    color: '#f97316',
     title: 'FLYING HIGH',
     subtitle: 'Visualização 3D • Streetwear',
     year: '2021',
@@ -255,6 +260,7 @@ const PROJECTS = [
   // ──────────────────────────────────────────────────────────
   {
     slug: 'nauticope',
+    color: '#94a3b8',
     title: 'CAMPANHA OFICIAL DO NÁUTICO',
     subtitle: 'Nova camisa branca • Streetwear',
     year: '2025',
@@ -308,6 +314,7 @@ const PROJECTS = [
   // ──────────────────────────────────────────────────────────
   {
     slug: 'wise',
+    color: '#dc2626',
     title: 'WISE',
     subtitle: 'Direção & edição • Conteúdo',
     year: '2025',
@@ -357,6 +364,7 @@ const PROJECTS = [
   // ──────────────────────────────────────────────────────────
   {
     slug: 'vida-cara-deluxe',
+    color: '#facc15',
     title: 'VIDA CARA DELUXE',
     subtitle: 'Album Art 3D • Orochi',
     year: '2023',
@@ -393,6 +401,7 @@ const PROJECTS = [
   // ──────────────────────────────────────────────────────────
   {
     slug: 'casa-da-barra',
+    color: '#0ea5e9',
     title: 'CASA DA BARRA',
     subtitle: 'Captação & Edição • Carlinhos Maia',
     year: '2024',
@@ -403,6 +412,7 @@ const PROJECTS = [
     client: 'Carlinhos Maia',
     clientRole: 'Agência Divergente — captação e edição',
     instagram: 'https://www.instagram.com/reel/C4yDdPPM79d/',
+    verticalMedia: true,
     heroImg: 'img/casa-da-barra/frame-44.jpg',
     intro: 'Captação completa do projeto da Casa da Barra do Carlinhos Maia — desde a plotagem/adesivação do caminhão e sua saída de Recife levando os prêmios, até a chegada em São Miguel dos Milagres (AL), onde acompanhei e registrei a montagem e produção das ativações.',
     body: 'O projeto foi desenvolvido pela Agência Divergente. Eu acompanhei toda a logística e produção — o trajeto do caminhão, a chegada na Casa da Barra e o passo a passo da montagem das ativações no local. A Terra 3D foi modelada no Blender e a edição final passou pelo DaVinci Resolve.',
@@ -453,6 +463,7 @@ const PROJECTS = [
   // ──────────────────────────────────────────────────────────
   {
     slug: 'by-nevoa',
+    color: '#a3886e',
     title: 'BY NEVOA',
     subtitle: '3D Fashion • Festival Noar',
     year: '2025',
@@ -488,6 +499,7 @@ const PROJECTS = [
   // ──────────────────────────────────────────────────────────
   {
     slug: 'bienal-pe',
+    color: '#3b82f6',
     title: 'BIENAL PE',
     subtitle: 'Direção de animação • Globo PE / SBT',
     year: '2025',

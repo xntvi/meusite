@@ -4,6 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>XNT</title>
+  <script>
+    // Mobile auto-redirect: if user is on a phone, go to /mobile/.
+    // Skips the redirect if user clicked "Versão desktop" (sessionStorage flag).
+    (function () {
+      try {
+        if (sessionStorage.getItem('forceDesktop')) return;
+        var ua = navigator.userAgent || '';
+        var isMobile = /Mobi|Android|iPhone|iPod|Windows Phone|BlackBerry|webOS|Opera Mini/i.test(ua);
+        if (isMobile) window.location.replace('mobile/');
+      } catch (e) {}
+    })();
+  </script>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23030303'/%3E%3Ctext x='16' y='23' font-family='Inter,sans-serif' font-size='20' font-weight='600' fill='%23ffffff' text-anchor='middle' letter-spacing='-1'%3EX%3C/text%3E%3C/svg%3E">
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -452,17 +464,6 @@
       .proj-before-after { grid-template-columns: 1fr; }
     }
 
-    /* ===== ABOUT — letter shimmer/fade ===== */
-    @keyframes about-letter-fade {
-      0%, 88%, 100% { opacity: 1; }
-      94%           { opacity: 0.18; }
-    }
-    .fade-letter {
-      display: inline-block;
-      animation: about-letter-fade ease-in-out infinite;
-      will-change: opacity;
-    }
-
     /* ===== SIDE BACK BUTTON (pulsing blue border) ===== */
     .proj-back-side {
       position: fixed;
@@ -526,6 +527,65 @@
       transform: translateX(2px);
     }
     .proj-instagram-link svg { width: 16px; height: 16px; flex-shrink: 0; stroke: currentColor; fill: none; stroke-width: 1.5; }
+
+    /* ===== VERTICAL MEDIA PROJECT (e.g., Casa da Barra) ===== */
+    .proj-vertical .proj-video-slot,
+    .proj-vertical .proj-media-full {
+      max-width: 380px;
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+    .proj-vertical .proj-video-slot { aspect-ratio: 9/16; }
+    .proj-vertical .proj-video-slot video { object-fit: cover; }
+    .proj-vertical .proj-media-full { aspect-ratio: auto; }
+    .proj-vertical .proj-media-full img {
+      aspect-ratio: 9/16;
+      object-fit: cover;
+      width: 100%; height: auto;
+      display: block;
+    }
+    .proj-vertical .proj-media-grid {
+      max-width: 920px;
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+    .proj-vertical .proj-media-grid-item { aspect-ratio: 9/16; }
+    .proj-vertical .proj-before-after {
+      max-width: 760px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .proj-vertical .proj-ba-item { aspect-ratio: 9/16; }
+
+    /* ===== PROJECT CARD COLOR (active when in viewport) ===== */
+    .project-card {
+      --proj-color: #0a84ff;
+      transition: box-shadow 0.7s ease;
+    }
+    .project-card[data-active="true"] {
+      box-shadow:
+        inset 0 0 0 1px var(--proj-color),
+        0 0 60px rgba(0,0,0,0.4),
+        0 0 80px -20px var(--proj-color);
+    }
+    .project-card[data-active="true"] .card-img {
+      opacity: 0.55;
+      filter: grayscale(0.25);
+    }
+    .project-card::after {
+      content: '';
+      position: absolute; inset: auto 0 0 0;
+      height: 2px; z-index: 25;
+      background: var(--proj-color);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
+    .project-card[data-active="true"]::after { opacity: 0.85; }
+    .project-card[data-active="true"] .card-meta span:last-child {
+      color: var(--proj-color);
+      transition: color 0.5s ease;
+    }
 
     /* ===== VIDEO SLOT (WEBM placeholder + actual video) ===== */
     .proj-video-slot {
@@ -893,18 +953,18 @@
           style="font-size:13px; font-weight:700; color:#fff; line-height:1.9; max-width:300px;"></p>
         <div style="display:flex; flex-direction:column; gap:16px;">
           <span style="font-family:'JetBrains Mono',monospace; font-size:9px; letter-spacing:0.3em; color:#fff; font-weight:700; text-transform:uppercase;">Onde pude usar minha criatividade:</span>
-          <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:24px 20px; align-items:center; justify-items:center;">
-            <div class="logo-rise" data-delay="1100" style="display:flex; align-items:center; justify-content:center; width:100%; height:44px;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(1).svg" alt="Parceiro" style="max-height:30px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
-            <div class="logo-rise" data-delay="1200" style="display:flex; align-items:center; justify-content:center; width:100%; height:44px;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(2).svg" alt="Parceiro" style="max-height:18px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
-            <div class="logo-rise" data-delay="1300" style="display:flex; align-items:center; justify-content:center; width:100%; height:44px;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(3).svg" alt="Parceiro" style="max-height:22px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
-            <div class="logo-rise" data-delay="1400" style="display:flex; align-items:center; justify-content:center; width:100%; height:44px;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(4).svg" alt="Parceiro" style="max-height:22px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
-            <div class="logo-rise" data-delay="1500" style="display:flex; align-items:center; justify-content:center; width:100%; height:44px;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(5).svg" alt="Parceiro" style="max-height:14px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
+          <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:32px 24px; align-items:center; justify-items:center;">
+            <div class="logo-rise" data-delay="1100" style="display:flex; align-items:center; justify-content:center; width:100%; height:56px;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(1).svg" alt="Parceiro" style="max-height:30px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
+            <div class="logo-rise" data-delay="1200" style="display:flex; align-items:center; justify-content:center; width:100%; height:56px;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(2).svg" alt="Parceiro" style="max-height:24px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
+            <div class="logo-rise" data-delay="1300" style="display:flex; align-items:center; justify-content:center; width:100%; height:56px;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(3).svg" alt="Parceiro" style="max-height:26px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
+            <div class="logo-rise" data-delay="1400" style="display:flex; align-items:center; justify-content:center; width:100%; height:56px;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(4).svg" alt="Parceiro" style="max-height:26px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
+            <div class="logo-rise" data-delay="1500" style="display:flex; align-items:center; justify-content:center; width:100%; height:56px;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(5).svg" alt="Parceiro" style="max-height:18px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
             <div class="logo-rise logo-mentos" data-delay="1600" style="display:flex; align-items:center; justify-content:center; width:100%; height:36px;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(6)%20-%20white.svg" alt="Mentos" style="max-height:24px; max-width:100%; width:auto; object-fit:contain;"></div>
-            <div class="logo-rise" data-delay="1700" style="display:flex; align-items:center; justify-content:center; width:100%; height:44px; grid-column: span 2;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(7).svg" alt="Globo" style="max-height:36px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
-            <div class="logo-rise" data-delay="1800" style="display:flex; align-items:center; justify-content:center; width:100%; height:44px;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(8).svg" alt="Parceiro" style="max-height:32px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
-            <div class="logo-rise" data-delay="1900" style="display:flex; align-items:center; justify-content:center; width:100%; height:44px;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(9).svg" alt="Parceiro" style="max-height:32px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
-            <div class="logo-rise" data-delay="2000" style="display:flex; align-items:center; justify-content:center; width:100%; height:44px;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(10).svg" alt="Parceiro" style="max-height:42px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
-            <div class="logo-rise" data-delay="2100" style="display:flex; align-items:center; justify-content:center; width:100%; height:44px;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(11).svg" alt="Parceiro" style="max-height:22px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
+            <div class="logo-rise" data-delay="1700" style="display:flex; align-items:center; justify-content:center; width:100%; height:44px; grid-column: span 2;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(7).svg" alt="Globo" style="max-height:42px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
+            <div class="logo-rise" data-delay="1800" style="display:flex; align-items:center; justify-content:center; width:100%; height:56px;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(8).svg" alt="Parceiro" style="max-height:32px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
+            <div class="logo-rise" data-delay="1900" style="display:flex; align-items:center; justify-content:center; width:100%; height:56px;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(9).svg" alt="Parceiro" style="max-height:32px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
+            <div class="logo-rise" data-delay="2000" style="display:flex; align-items:center; justify-content:center; width:100%; height:56px;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(10).svg" alt="Parceiro" style="max-height:42px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
+            <div class="logo-rise" data-delay="2100" style="display:flex; align-items:center; justify-content:center; width:100%; height:56px;"><img src="LOGOS%20PARCEIROS/MARCA%2001%20%20(11).svg" alt="Parceiro" style="max-height:26px; max-width:100%; width:auto; object-fit:contain; filter:brightness(0) invert(1);"></div>
           </div>
         </div>
       </div>
@@ -1100,37 +1160,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (status) status.style.opacity = '1';
 });
 
-// ===== ABOUT — wrap letters with random fade (DOM-only TextNodes preserve <span> highlights) =====
-document.addEventListener('DOMContentLoaded', () => {
-  const root = document.getElementById('about-fade');
-  if (!root) return;
-  function wrap(node) {
-    if (node.nodeType === 3) {
-      const text = node.nodeValue;
-      const frag = document.createDocumentFragment();
-      for (const ch of text) {
-        if (ch === ' ' || ch === '\n' || ch === '\t') {
-          frag.appendChild(document.createTextNode(ch));
-        } else {
-          const s = document.createElement('span');
-          s.className = 'fade-letter';
-          s.textContent = ch;
-          // long random delay (0-30s) + medium random duration (4-8s)
-          // → only some letters dim at any moment
-          s.style.animationDelay    = (Math.random() * 30).toFixed(2) + 's';
-          s.style.animationDuration = (4 + Math.random() * 4).toFixed(2) + 's';
-          frag.appendChild(s);
-        }
-      }
-      node.parentNode.replaceChild(frag, node);
-      return;
-    }
-    if (node.nodeType !== 1) return;
-    // Walk children (snapshot to array since we mutate)
-    Array.from(node.childNodes).forEach(wrap);
-  }
-  Array.from(root.childNodes).forEach(wrap);
-});
 
 // ===== OPEN PROJECT =====
 function openProject(slug) {
@@ -1262,7 +1291,7 @@ function openProject(slug) {
       </div>
     </div>
 
-    <div class="proj-body">
+    <div class="proj-body${p.verticalMedia ? ' proj-vertical' : ''}">
       <div class="proj-section-title">SOBRE O PROJETO</div>
 
       <div class="proj-intro">
@@ -1421,7 +1450,9 @@ function renderProjects() {
   if (!grid) return;
 
   grid.innerHTML = PROJECTS.map(p => `
-    <article class="project-card" data-categories="${p.categorySlug}" onclick="openProject('${p.slug}')">
+    <article class="project-card" data-categories="${p.categorySlug}" data-slug="${p.slug}"
+             style="--proj-color:${p.color || '#0a84ff'};"
+             onclick="openProject('${p.slug}')">
       <img class="card-img" src="${p.heroImg}" alt="">
       <div class="card-content">
         <div>
@@ -1434,6 +1465,22 @@ function renderProjects() {
   `).join('');
 
   PROJECTS.forEach(p => buildAnimatedTitle(document.getElementById(`title-${p.slug}`), p.title));
+  attachCardScrollObserver(grid.querySelectorAll('.project-card'));
+}
+
+// ===== CARD SCROLL OBSERVER (highlights project color when in viewport) =====
+function attachCardScrollObserver(cards) {
+  if (!('IntersectionObserver' in window) || !cards.length) return;
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting && e.intersectionRatio > 0.55) {
+        e.target.dataset.active = 'true';
+      } else if (e.intersectionRatio < 0.3) {
+        e.target.dataset.active = 'false';
+      }
+    });
+  }, { threshold: [0, 0.3, 0.55, 0.8] });
+  cards.forEach(c => obs.observe(c));
 }
 
 
