@@ -294,7 +294,7 @@ const PROJECTS = [
     ],
     media: [
       { type: 'video-slot',
-        src: 'Campanha%20oficial%20do%20nauticope.%20A%20gente%20sonhou%2C%20criou%2C%20viveu.%20Agora%20%C3%A9%20a%20vez%20do%20mundo%20sentir..mp4',
+        src: 'WEBM/Campanha%20oficial%20do%20nauticope.%20A%20gente%20sonhou%2C%20criou%2C%20viveu.%20Agora%20%C3%A9%20a%20vez%20do%20mundo%20sentir-.webm',
         fallback: 'Campanha oficial do nauticope. A gente sonhou, criou, viveu. Agora é a vez do mundo sentir..mp4',
         label: 'Campanha oficial',
         format: 'MP4 · DESTAQUE',
@@ -346,7 +346,8 @@ const PROJECTS = [
     ],
     media: [
       { type: 'video-slot',
-        src: 'WISE.mp4',
+        src: 'WEBM/WISE_1.webm',
+        fallback: 'WISE.mp4',
         label: 'WISE',
         format: 'MP4 · DESTAQUE',
         autoplay: false },
@@ -531,7 +532,8 @@ const PROJECTS = [
     ],
     media: [
       { type: 'video-slot',
-        src: 'BIENAL%20PE%20-%20DIRE%C3%87%C3%83O%20DE%20ANIMA%C3%87%C3%83O.mp4',
+        src: 'WEBM/BIENAL%20PE%20-%20DIRE%C3%87%C3%83O%20DE%20ANIMA%C3%87%C3%83O_1.webm',
+        fallback: 'BIENAL%20PE%20-%20DIRE%C3%87%C3%83O%20DE%20ANIMA%C3%87%C3%83O.mp4',
         label: 'Bienal PE — Animação principal',
         format: 'MP4 · DESTAQUE',
         autoplay: false },
@@ -543,7 +545,8 @@ const PROJECTS = [
         left:  'img/bienal-pe/frame-21.jpg',
         right: 'img/bienal-pe/frame-25.jpg' },
       { type: 'video-slot',
-        src: 'BIENAL%20PE%20-%20DIRE%C3%87%C3%83O%20DE%20ANIMA%C3%87%C3%83O%202.mp4',
+        src: 'WEBM/BIENAL%20PE%20-%20DIRE%C3%87%C3%83O%20DE%20ANIMA%C3%87%C3%83O%202_1.webm',
+        fallback: 'BIENAL%20PE%20-%20DIRE%C3%87%C3%83O%20DE%20ANIMA%C3%87%C3%83O%202.mp4',
         label: 'Bienal PE — Variação curta',
         format: 'MP4 · 02',
         autoplay: false },
