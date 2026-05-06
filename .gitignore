@@ -17,10 +17,8 @@ head bar.html
 Frame 30.png
 
 # Raw source videos not referenced by the site (saves ~16MB)
-A @wise.medicina*.mp4
 BTS da campanha*.mp4
 
 # WEBM oversized / unused (kept local only)
-WEBM/A @wise.medicina*.webm
 WEBM/Casa da barra*.webm
 WEBM/*.xmp
